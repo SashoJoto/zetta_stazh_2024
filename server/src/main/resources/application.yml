@@ -1,0 +1,24 @@
+server:
+  error:
+    include-message: always
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/zetta-love
+    username: postgres
+    password: 1234
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  servlet:
+    multipart:
+      max-file-size: 8MB
+      max-request-size: 8MB
