@@ -13,7 +13,9 @@ services:
       - "5432:5432"
 
   keycloak:
-    image: quay.io/keycloak/keycloak:25.0.1
+    build:
+      context: .
+      dockerfile: Dockerfile-keycloak
     environment:
       DB_VENDOR: postgres
       DB_ADDR: postgres
@@ -26,7 +28,6 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
-    command: start-dev
 
 volumes:
   postgres_data:
