@@ -29,5 +29,17 @@ services:
     depends_on:
       - postgres
 
+  spring-boot-app:
+    build: ../server  # Assuming your Spring Boot project is in the 'server' directory
+    environment:
+      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/zettalove"
+      SPRING_DATASOURCE_USERNAME: "dev"
+      SPRING_DATASOURCE_PASSWORD: "1234a"
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - keycloak
+
 volumes:
   postgres_data:
