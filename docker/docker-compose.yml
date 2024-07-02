@@ -2,26 +2,26 @@ version: '3.9'
 
 services:
   postgres:
-    image: postgres:16
+    image: postgres:14
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 1234
-      POSTGRES_DB: zettalove
+      POSTGRES_USER: "dev"
+      POSTGRES_PASSWORD: "1234a"
+      POSTGRES_DB: "zettalove"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
+      - "6432:5432"
 
   keycloak:
     image: quay.io/keycloak/keycloak:25.0.1
     environment:
-      DB_VENDOR: postgres
-      DB_ADDR: postgres
-      DB_DATABASE: zettalove
-      DB_USER: postgres
-      DB_PASSWORD: 1234
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: "postgres"
+      DB_ADDR: "postgres"
+      DB_DATABASE: "zettalove"
+      DB_USER: "dev"
+      DB_PASSWORD: "1234a"
+      KEYCLOAK_USER: "admin"
+      KEYCLOAK_PASSWORD: "admin"
     ports:
       - "8080:8080"
     depends_on:

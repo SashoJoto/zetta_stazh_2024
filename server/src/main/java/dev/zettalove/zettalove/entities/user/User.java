@@ -109,7 +109,7 @@ public class User {
             name = "user_matches",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "matched_user_id"))
-    private List<User>  matchedUsers;
+    private List<User> matchedUsers;
 
     @ManyToMany
     @JoinTable(
@@ -118,4 +118,15 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "preference_id"))
     private List<Preference> preferences;
 
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "user_id")
+    private List<UserImage> images;
+
+    public void addImage(UserImage image) {
+        images.add(image);
+    }
+
+    public void removeImage(UserImage image) {
+        images.remove(image);
+    }
 }

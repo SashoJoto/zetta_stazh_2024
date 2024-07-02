@@ -45,13 +45,4 @@ public class Gender {
             unique = true
     )
     private String name;
-
-    @Column(
-            name = "description",
-            nullable = false
-    )
-    private String description;
-
-    @OneToMany(mappedBy = "gender", cascade = CascadeType.ALL)
-    private List<User> users;
 }
