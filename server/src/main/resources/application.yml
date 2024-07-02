@@ -1,24 +1,24 @@
 server:
   error:
     include-message: always
-  port: 8080
+  port: 8081
 
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/zetta-love
-    username: postgres
-    password: 1234
+    url: jdbc:postgresql://localhost:6432/zettalove
+    username: dev
+    password: 1234a
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
         format_sql: true
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
-  servlet:
-    multipart:
-      max-file-size: 8MB
-      max-request-size: 8MB
+    servlet:
+      multipart:
+        max-file-size: 8MB
+        max-request-size: 8MB

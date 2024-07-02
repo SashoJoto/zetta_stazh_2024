@@ -46,15 +46,4 @@ public class Preference {
             unique = true
     )
     private String name;
-
-    @Column(
-            name = "description",
-            nullable = false
-    )
-    private String description;
-
-    @ManyToMany(mappedBy = "preferences")
-    private List<User> users;
-
-
 }
