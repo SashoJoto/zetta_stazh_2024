@@ -20,7 +20,6 @@ const ProfilePage: React.FC = () => {
 
     return (
         <div>
-            <Header />
             <div className="container">
                 <h1>Profile Page</h1>
                 <form onSubmit={handleSubmit}>

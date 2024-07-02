@@ -1,24 +1,23 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import logo from '../src/assets/zettalove_logo.png';
 import profilePic from '../src/assets/profile_pic_empty.png';
+import '../src/Header.css'
 
 const Header: React.FC = () => {
     return (
-        <nav className="navbar navbar-expand-lg navbar-light bg-light">
-            <Link className="navbar-brand" to="/">
-                <img src={logo} alt="Logo" style={{ width: '40px', height: '40px' }} />
+        <div>
+            <Link to="/">
+                <div className="logo">
+                    <img src={logo} alt="Logo" style={{width: '150px', height: '50px'}}/>
+                </div>
             </Link>
-            <div className="collapse navbar-collapse">
-                <ul className="navbar-nav ml-auto">
-                    <li className="nav-item">
-                        <Link className="nav-link" to="/profile">
-                            <img src={profilePic} alt="Profile" className="rounded-circle" style={{ width: '40px', height: '40px' }} />
-                        </Link>
-                    </li>
-                </ul>
-            </div>
-        </nav>
+            <Link to="/profile">
+                <div className="profile-pic">
+                    <img src="../src/assets/profile_pic_empty.png" alt="Profile pic" style={{borderRadius: '15px'}}/>
+                </div>
+            </Link>
+        </div>
     );
 };
 

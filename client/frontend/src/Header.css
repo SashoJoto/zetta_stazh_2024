@@ -1,19 +1,21 @@
-.header {
+.navbar {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #f0f0f0;
-    border-bottom: 1px solid #ccc;
-    min-height: 10vh;
+    height: 10vh;
+    background: transparent;
 }
 
-.header__logo img {
-    height: 40px; /* Adjust size as needed */
+.logo {
+    float: left;
+    margin: 30px;
 }
 
-.header__profile img {
-    width: 40px; /* Adjust size as needed */
-    height: 40px; /* Adjust size as needed */
-    border-radius: 50%; /* Make it circular */
+.profile-pic {
+    float: right;
+    margin: 30px;
+}
+
+.profile-pic img {
+    width: 40px;
+    height: 40px;
 }
