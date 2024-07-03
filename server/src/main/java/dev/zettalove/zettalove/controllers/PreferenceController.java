@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/preferences")
+@RequestMapping("/server/preferences")
 @RequiredArgsConstructor
 public class PreferenceController {
     private final PreferenceService preferenceService;

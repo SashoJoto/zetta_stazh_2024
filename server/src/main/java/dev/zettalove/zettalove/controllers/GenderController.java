@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/genders")
+@RequestMapping("/server/genders")
 @RequiredArgsConstructor
 public class GenderController {
     private final GenderService genderService;
