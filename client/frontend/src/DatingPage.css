@@ -1,0 +1,24 @@
+.dating-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.dating-page img {
+    max-width: 100%;
+    height: auto;
+}
+
+.date-pic-container {
+    position: relative;
+    text-align: center;
+    color: white;
+}
+
+.date-pic-text {
+    position: absolute;
+    bottom: 40px;
+    left: 50px;
+    z-index: 999;
+    font-size: 35px;
+}
