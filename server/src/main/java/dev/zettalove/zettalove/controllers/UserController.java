@@ -2,6 +2,7 @@ package dev.zettalove.zettalove.controllers;
 
 import dev.zettalove.zettalove.entities.user.UserImage;
 import dev.zettalove.zettalove.entities.user.User;
+import dev.zettalove.zettalove.services.RecommendationService;
 import dev.zettalove.zettalove.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +14,11 @@ import java.util.Optional;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/server/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final RecommendationService recommendationService;
 
     @GetMapping
     public List<User> getAllUsers() {
@@ -63,6 +65,12 @@ public class UserController {
     public ResponseEntity<String> likeUser(@PathVariable Long userId, @PathVariable Long likedUserId) {
         userService.likeUser(userId, likedUserId);
         return ResponseEntity.ok("User liked successfully");
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public void generateRecommendations(@PathVariable Long id) {
+        Optional<User> user = userService.getUserById(id);
+        user.ifPresent(recommendationService::getRecommendedProfiles);
     }
 
     @GetMapping("/{userId}/matches")

@@ -3,13 +3,12 @@ package dev.zettalove.zettalove.entities.user;
 import dev.zettalove.zettalove.entities.gender.Gender;
 import dev.zettalove.zettalove.entities.preference.Preference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -90,6 +89,18 @@ public class User {
     )
     private String phoneNumber;
 
+    @Column(
+            name = "min_age",
+            nullable = false
+    )
+    private Integer minAge = 18;  // Default value
+
+    @Column(
+            name = "max_age",
+            nullable = false
+    )
+    private Integer maxAge = 99;  // Default value
+
     @ManyToOne
     @JoinColumn(
             name = "gender_id",
@@ -97,19 +108,26 @@ public class User {
     )
     private Gender gender;
 
+    @ManyToOne
+    @JoinColumn(
+            name = "desired_gender_id",
+            nullable = false
+    )
+    private Gender desiredGender;
+
     @ManyToMany
     @JoinTable(
             name = "user_likes",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "liked_user_id"))
-    private List<User> likedUsers;
+    private Set<User> likedUsers = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
             name = "user_matches",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "matched_user_id"))
-    private List<User> matchedUsers;
+    private Set<User> matchedUsers = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
@@ -117,6 +135,20 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "preference_id"))
     private List<Preference> preferences;
+
+    @ManyToMany
+    @JoinTable(
+            name = "recommended_users",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "recommended_user_id"))
+    private Set<User> recommended = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "swiped_users",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "swiped_user_id"))
+    private Set<User> swiped = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "user_id")

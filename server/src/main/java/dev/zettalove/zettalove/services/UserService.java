@@ -70,19 +70,18 @@ public class UserService {
         User likedUser = userRepository.findById(likedUserId).orElseThrow(() -> new RuntimeException("Liked user not found"));
 
         user.getLikedUsers().add(likedUser);
+        user.getSwiped().add(user);
+        user.getRecommended().remove(user);
         userRepository.save(user);
 
         if (likedUser.getLikedUsers().contains(user)) {
-            //TODO
-            // Match found
-            // Notify both users about the match (could be through WebSocket or other means)
+            likedUser.getMatchedUsers().add(user);
+            user.getMatchedUsers().add(likedUser);
         }
     }
 
     public Set<User> getMatches(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getLikedUsers().stream()
-                .filter(likedUser -> likedUser.getLikedUsers().contains(user))
-                .collect(Collectors.toSet());
+        return user.getMatchedUsers();
     }
 }
