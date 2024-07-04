@@ -1,22 +1,28 @@
 package dev.zettalove.zettalove.services;
 
+import dev.zettalove.zettalove.chat.WebSocketClientService;
+import dev.zettalove.zettalove.chat.entities.ChatMessage;
+import dev.zettalove.zettalove.chat.entities.ChatUser;
+import dev.zettalove.zettalove.chat.entities.Status;
 import dev.zettalove.zettalove.entities.user.UserImage;
 import dev.zettalove.zettalove.entities.user.User;
 import dev.zettalove.zettalove.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final RestTemplate restTemplate;
+    private final WebSocketClientService webSocketClientService;
+
+    @Value("${chat.url}")
+    private String chatUrl;
 
     public List<User> getAllUsers() {
         return userRepository.findAll();
@@ -31,7 +37,16 @@ public class UserService {
     }
 
     public User saveUser(User user) {
-        return userRepository.save(user);
+        User savedUser = userRepository.save(user);
+        addUserToChatSystem(savedUser);
+        return savedUser;
+    }
+
+    private void addUserToChatSystem(User user) {
+        String nickname = user.getNickname();
+        String fullName = user.getFirstName() + " " + user.getLastName();
+        ChatUser chatUser = new ChatUser(nickname, fullName);
+        webSocketClientService.addUserToChatSystem(chatUser);
     }
 
     public void deleteUser(Long id) {
@@ -70,14 +85,55 @@ public class UserService {
         User likedUser = userRepository.findById(likedUserId).orElseThrow(() -> new RuntimeException("Liked user not found"));
 
         user.getLikedUsers().add(likedUser);
-        user.getSwiped().add(user);
-        user.getRecommended().remove(user);
         userRepository.save(user);
 
         if (likedUser.getLikedUsers().contains(user)) {
             likedUser.getMatchedUsers().add(user);
             user.getMatchedUsers().add(likedUser);
+            notifyUsersForMatch(user, likedUser);
         }
+    }
+
+    public void swipeUser(Long userId, Long swipedUserId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        User swipedUser = userRepository.findById(swipedUserId).orElseThrow(() -> new RuntimeException("Swiped user not found"));
+        user.getSwiped().add(swipedUser);
+        user.getRecommended().remove(swipedUser);
+        userRepository.save(user);
+    }
+     public void notifyUsersForMatch(User user, User likedUser) {
+        // Fetch user ids from chat service
+        ChatUser user1 = restTemplate.getForObject(chatUrl + "/users/" + user.getNickname(), ChatUser.class);
+        ChatUser user2 = restTemplate.getForObject(chatUrl + "/users/" + likedUser.getNickname(), ChatUser.class);
+
+        if (user1 == null || user2 == null) {
+            throw new RuntimeException("User not found in chat service");
+        }
+
+        String userId1 = user1.getNickName();
+        String userId2 = user2.getNickName();
+
+        // Create chat message for notification to user 1
+        ChatMessage chatMessage = ChatMessage.builder()
+                .chatId(userId1 + "_" + userId2) // or some other logic to generate a chatId
+                .senderId(userId1)
+                .recipientId(userId2)
+                .content("You have a new match!")
+                .timestamp(new Date())
+                .build();
+
+        // Create chat message for notification to user 2
+        ChatMessage chatMessage2 = ChatMessage.builder()
+                .chatId(userId1 + "_" + userId2)
+                .senderId(userId2)
+                .recipientId(userId1)
+                .content("You have a new match!")
+                .timestamp(new Date())
+                .build();
+
+        // Post the chat message to the chat service to process and notify users
+        webSocketClientService.sendMessage(chatMessage);
+        webSocketClientService.sendMessage(chatMessage2);
     }
 
     public Set<User> getMatches(Long userId) {

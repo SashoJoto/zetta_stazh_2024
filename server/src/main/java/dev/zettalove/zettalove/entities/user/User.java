@@ -5,10 +5,7 @@ import dev.zettalove.zettalove.entities.preference.Preference;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -23,6 +20,8 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
                 @UniqueConstraint(name = "user_email_unique", columnNames = "email"),
         }
 )
+@EqualsAndHashCode(exclude = { "images", "likedUsers", "matchedUsers", "preferences", "recommended", "swiped"})
+@ToString(exclude = { "images", "likedUsers", "matchedUsers", "preferences", "recommended", "swiped" })
 public class User {
     @Id
     @SequenceGenerator(
@@ -39,6 +38,13 @@ public class User {
             updatable = false
     )
     private Long id;
+
+    @Column(
+            name = "username",
+            nullable = false,
+            unique = true
+    )
+    private String nickname;
 
     @Column(
             name = "first_name",
