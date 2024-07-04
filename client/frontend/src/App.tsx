@@ -1,22 +1,27 @@
+// src/App.tsx
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Header from '../components/Header';
 import DatingPage from '../pages/DatingPage';
-import MessagesPage from '../pages/MessagingPage';
+import MessagesPage from '../pages/MessagesPage';
 import ProfilePage from '../pages/ProfilePage';
-import './App.css'
+import LoginPage from '../pages/LoginPage';
+import RegisterPage from '../pages/RegisterPage';
+import { useAuth } from '../contexts/AuthContext';
 
 const App: React.FC = () => {
+    const { user } = useAuth();
+
     return (
-        <div id="route" style={{ minHeight: '100vh' }}> {/* Example: AliceBlue background color */}
-            <Router>
-                <Header />
-                <Routes>
-                    <Route path="/" element={<DatingPage />} />
-                    <Route path="/messages" element={<MessagesPage />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                </Routes>
-            </Router>
+        <div style={{ minHeight: '100vh' }}>
+            <Header />
+            <Routes>
+                <Route path="/" element={<DatingPage />} />
+                <Route path="/messages" element={<MessagesPage />} />
+                <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
+                <Route path="/login" element={!user ? <LoginPage /> : <Navigate to="/profile" />} />
+                <Route path="/register" element={!user ? <RegisterPage /> : <Navigate to="/profile" />} />
+            </Routes>
         </div>
     );
 };
