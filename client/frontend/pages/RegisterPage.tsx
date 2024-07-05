@@ -55,7 +55,7 @@ const RegisterPage: React.FC = () => {
                         <label htmlFor="password">Password</label>
                         <input className="input-register" type="password" id="password" name="password" required />
                     </div>
-                    <div className="input-group">
+                    {/*<div className="input-group">
                         <label htmlFor="dob">Date of Birth</label>
                         <DatePicker
                             selected={dob}
@@ -91,7 +91,7 @@ const RegisterPage: React.FC = () => {
                             placeholder="Tell us about yourself..."
                             required
                         ></textarea>
-                    </div>
+                    </div>*/}
                     <button className="button-register" type="submit">Register</button>
                     {error && <p className="error-message">{error}</p>}
                 </form>

@@ -1,15 +1,19 @@
 import React from 'react';
-import Header from '../components/Header'; // Assuming your header component is in a file named Header.tsx
-import '../src/MessagesPage.css'; // Import your CSS file for styling
+import Sidebar from '../components/Sidebar'
+import Chat from '../components/Chat'
+import Header from '../components/Header';
+import '../src/MessagesPage.css';
 
 const MessagingPage: React.FC = () => {
     // Dummy messages data for demonstration
 
     return (
-        <div className="messaging-page">
+        <div className="messages-page">
+            <div className="container">
 
+            </div>
         </div>
     );
 };
 
-    export default MessagingPage;
+export default MessagingPage;
