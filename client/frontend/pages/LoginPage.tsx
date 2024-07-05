@@ -1,63 +1,61 @@
-// src/pages/LoginPage.tsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import React from 'react';
+import { Link, Navigate } from 'react-router-dom';
+import '../src/LoginPage.css'
 
-const LoginPage: React.FC = () => {
-    const { login } = useAuth();
-    const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: ''
-    });
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = e.target;
-        setFormData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
-    };
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        // Perform your login logic here
-        console.log(formData);
-        // Assuming login success and user data retrieval
-        const userData = {
-            firstName: formData.firstName,
-            lastName: formData.lastName,
-            email: formData.email,
-            age: '25',
-            sex: 'Female',
-            bio: 'Lorem ipsum',
-            image: null
-        };
-        login(userData);
-        navigate('/profile');
-    };
-
+// const LoginPage: React.FC = () => {
+//     return (
+//         <div className="login-container">
+//             <p>Login</p>
+//             <h2>Login or Register</h2>
+//             <form className="login-form">
+//                 <input
+//                     type="email"
+//                     placeholder="Email"
+//                     value=""
+//                     // onChange={(e) => setEmail(e.target.value)}
+//                     required
+//                 />
+//                 <input
+//                     type="password"
+//                     placeholder="Password"
+//                     value=""
+//                     // onChange={(e) => setPassword(e.target.value)}
+//                     required
+//                 />
+//                 <button type="submit">Login</button>
+//                 {/*{error && <p className="error-message">{error}</p>}*/}
+//             </form>
+//             <p className="register-link">
+//                 New user? <Link to="/register">Register here</Link>
+//             </p>
+//         </div>
+//     );
+// };
+//
+// export default LoginPage;
+const LoginPage:React.FC = () => {
     return (
-        <div className="container mt-5">
-            <h2>Login</h2>
-            <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="firstName" className="form-label">First Name</label>
-                    <input type="text" className="form-control" id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="lastName" className="form-label">Last Name</label>
-                    <input type="text" className="form-control" id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required />
-                </div>
-                <div className="mb-3">
-                    <label htmlFor="email" className="form-label">E-mail</label>
-                    <input type="email" className="form-control" id="email" name="email" value={formData.email} onChange={handleChange} required />
-                </div>
-                <button type="submit" className="btn btn-primary">Login</button>
-            </form>
+        <div className="container">
+            <div className="login-container">
+                <h1>Login</h1>
+                <form id="loginForm">
+                    <div className="input-group">
+                        <label htmlFor="username">Username</label>
+                        <input className="input-login" type="text" id="username" name="username" required/>
+                    </div>
+                    <div className="input-group">
+                        <label htmlFor="password">Password</label>
+                        <input className="input-login" type="password" id="password" name="password" required/>
+                    </div>
+                    <button className="button-login" type="submit">Login</button>
+                </form>
+                <p style={{fontSize:'12px', marginTop:'10px', textAlign:'left'}}>
+                    New user?
+                    <Link to="/register" id="link-to-register">Register here</Link>
+                </p>
+            </div>
         </div>
     );
-};
+}
 
 export default LoginPage;

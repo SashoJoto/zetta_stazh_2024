@@ -1,0 +1,68 @@
+.container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-container {
+    margin-top: 10vh;
+    font-family: "Comic Sans MS", sans-serif;
+    background: white;
+    border: 2px solid lightpink;
+    padding: 40px;
+    width: 320px;
+    box-shadow: 10px 10px 0 lightpink;
+    text-align: center;
+}
+
+h1 {
+    font-size: 28px;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.input-login {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #000;
+    box-shadow: 3px 3px 0 #000;
+    font-size: 14px;
+    outline: 0;
+}
+
+.button-login {
+    background-color: lightpink;
+    border: 2px solid lightpink;
+    padding: 12px;
+    width: 100%;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 lightpink;
+    font-size: 16px;
+}
+
+.button-login:hover {
+    background-color: pink;
+    border: 2px solid pink;
+    box-shadow: 3px 3px 0 pink;
+}
+
+@media (max-width: 600px) {
+    .login-container {
+        width: 90%;
+        padding: 30px;
+    }
+}
+
+#link-to-register {
+    color: lightpink;
+}
