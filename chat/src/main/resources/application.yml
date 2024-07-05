@@ -1,0 +1,18 @@
+spring:
+  data:
+    mongodb:
+      username: dev
+      password: 1234a
+      host: localhost
+      port: 27018
+      database: chat_app
+      authentication-database: admin
+server:
+  port: 8082
+logging:
+  level:
+    org:
+      springframework:
+         web: DEBUG
+         messaging: DEBUG
+         socket: DEBUG

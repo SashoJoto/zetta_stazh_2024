@@ -19,8 +19,8 @@ WORKDIR /app
 # Copy the packaged jar from the build stage
 COPY --from=build /usr/src/app/target/*.jar app.jar
 
-# Make port 8081 available to the world outside this container
-EXPOSE 8081
+# Make port 8082 available to the world outside this container
+EXPOSE 8082
 
 # Run the jar file
 ENTRYPOINT ["java", "-jar", "app.jar"]

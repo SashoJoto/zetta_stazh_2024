@@ -3,9 +3,14 @@ server:
     include-message: always
   port: 8081
 
+chat:
+  url: http://chat-system:8082
+  users_url: http://chat-system:8082/users
+  socket_url: ws://chat-system:8082/ws
+
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:6432/zettalove
+    url: jdbc:postgresql://postgres:5432/zettalove
     username: dev
     password: 1234a
     driver-class-name: org.postgresql.Driver
