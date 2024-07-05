@@ -2,15 +2,15 @@ version: '3.9'
 
 services:
   postgres:
-    image: postgres:14
+    image: postgres:16
     environment:
-      POSTGRES_USER: "dev"
-      POSTGRES_PASSWORD: "1234a"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "1234"
       POSTGRES_DB: "zettalove"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "6432:5432"
+      - "5432:5432"
 
   keycloak:
     build:
@@ -20,8 +20,8 @@ services:
       DB_VENDOR: "postgres"
       DB_ADDR: "postgres"
       DB_DATABASE: "zettalove"
-      DB_USER: "dev"
-      DB_PASSWORD: "1234a"
+      DB_USER: "postgres"
+      DB_PASSWORD: "1234"
       KEYCLOAK_USER: "admin"
       KEYCLOAK_PASSWORD: "admin"
     ports:
@@ -29,41 +29,17 @@ services:
     depends_on:
       - postgres
 
-  server:
-    build: ../server 
-    environment:
-      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/zettalove"
-      SPRING_DATASOURCE_USERNAME: "dev"
-      SPRING_DATASOURCE_PASSWORD: "1234a"
-    ports:
-      - "8081:8081"
-    depends_on:
-      - postgres
-      - keycloak
-      - chat-system
-  
-  mongodb:
-    image: mongo
-    container_name: mongo_db
-    ports:
-      - 27018:27017
-    volumes:
-      - mongo:/data
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=dev
-      - MONGO_INITDB_ROOT_PASSWORD=1234a
-
-  chat-system:
-    build:
-      context: ../chat
-      dockerfile: Dockerfile
-    environment:
-      MONGODB_URI: "mongodb://dev:1234a@mongo_db:27017/chatdb"
-    ports:
-      - "8082:8082"
-    depends_on:
-      - mongodb
+#  spring-boot-app:
+#    build: ../server  # Assuming your Spring Boot project is in the 'server' directory
+#    environment:
+#      SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/zettalove"
+#      SPRING_DATASOURCE_USERNAME: "dev"
+#      SPRING_DATASOURCE_PASSWORD: "1234a"
+#    ports:
+#      - "8081:8081"
+#    depends_on:
+#      - postgres
+#      - keycloak
 
 volumes:
   postgres_data:
-  mongo:

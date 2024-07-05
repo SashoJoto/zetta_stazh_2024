@@ -2,80 +2,38 @@ package dev.zettalove.zettalove.entities.user;
 
 import dev.zettalove.zettalove.entities.gender.Gender;
 import dev.zettalove.zettalove.entities.preference.Preference;
+import dev.zettalove.zettalove.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.*;
-
-import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "User")
-@Table(
-        name = "user_",
-        uniqueConstraints = {
-                @UniqueConstraint(name = "user_email_unique", columnNames = "email"),
-        }
-)
-@EqualsAndHashCode(exclude = { "images", "likedUsers", "matchedUsers", "preferences", "recommended", "swiped"})
-@ToString(exclude = { "images", "likedUsers", "matchedUsers", "preferences", "recommended", "swiped" })
+@Table(name = "user_")
 public class User {
     @Id
-    @SequenceGenerator(
-            name = "user_sequence",
-            sequenceName = "user_sequence",
-            allocationSize = 1
-    )
-    @GeneratedValue(
-            strategy = SEQUENCE,
-            generator = "user_sequence"
-    )
     @Column(
             name = "id",
-            updatable = false
-    )
-    private Long id;
-
-    @Column(
-            name = "username",
-            nullable = false,
-            unique = true
-    )
-    private String nickname;
-
-    @Column(
-            name = "first_name",
             nullable = false
     )
-    private String firstName;
+    private UUID Id;
 
     @Column(
-            name = "last_name",
+            name = "profile_status",
             nullable = false
     )
-    private String lastName;
+    @Enumerated(EnumType.STRING)
+    private UserStatus profileStatus;
 
     @Column(
             name = "date_of_birth",
             nullable = false
     )
     private Date dateOfBirth;
-
-    @Column(
-            name = "email",
-            nullable = false,
-            unique = true
-    )
-    private String email;
-
-    @Column(
-            name = "password",
-            nullable = false
-    )
-    private String password;
 
     @Column(
             name = "description",
@@ -167,4 +125,10 @@ public class User {
     public void removeImage(UserImage image) {
         images.remove(image);
     }
+
+    @PrePersist
+    private void defaultValues() {
+        profileStatus = UserStatus.PREFERENCES_MISSING;
+    }
+
 }
