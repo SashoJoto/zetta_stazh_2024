@@ -8,9 +8,9 @@ import 'slick-carousel/slick/slick-theme.css';
 import '../src/DatingPage.css';
 
 const cardsData = [
-    { id: 1, image: datePic, name: 'Toni Kalashnika', age: 25, bio: 'Bio for Toni Kalashnika' },
-    { id: 2, image: datePic1, name: 'Toni Kalashnika', age: 25, bio: 'Bio for Toni Kalashnika' },
-    { id: 3, image: datePic2, name: 'Toni Kalashnika', age: 25, bio: 'Bio for Toni Kalashnika' },
+    { id: 1, image: datePic, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing' ,bio: 'скъпа изглеждаш добре, ма не по+добре от хартията! за хартия бати лакомията. таа твойта бати мръсотията! ki + kilian по шията top тупалка, бати возията горчи, ама е бати вкусутията глей как блести, ебати газарията!' },
+    { id: 2, image: datePic1, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing'  ,bio: 'Bio for Toni Kalashnika' },
+    { id: 3, image: datePic2, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing' ,bio: 'Bio for Toni Kalashnika' },
 ];
 
 const DatingPage: React.FC = () => {
@@ -30,7 +30,35 @@ const DatingPage: React.FC = () => {
                     <div className="date-pic-card" key={card.id}>
                         <img src={card.image} alt={`Card ${card.id}`} className="date-pic-image" />
                         <div className="date-pic-name">{card.name}, {card.age}</div>
-                        <div className="date-pic-bio">{card.bio}</div>
+                        <div className="date-pic-bio">
+                            <div className="date-pic-icon" style={{fontSize:'20px'}}>
+                                <div className="tashak">
+                                    <img src="../src/assets/location.png" alt="location"/>
+                                    <h2>Location</h2>
+                                </div>
+                                <div className="tashak-tekst">
+                                    {card.address}
+                                </div>
+                            </div>
+                            <div className="date-pic-icon" style={{fontSize:'20px'}}>
+                                <div className="tashak">
+                                    <img src="../src/assets/hobbies.png" alt="interests"/>
+                                    <h2>Interests</h2>
+                                </div>
+                                <div className="tashak-tekst">
+                                    {card.interests}
+                                </div>
+                            </div>
+                            <div className="date-pic-icon" style={{fontSize:'20px'}}>
+                                <div className="tashak">
+                                    <img style={{marginRight:'10px'}} src="../src/assets/profile.png" alt="profile"/>
+                                    <h2>Bio</h2>
+                                </div>
+                                <div className="tashak-tekst">
+                                    {card.bio}
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 ))}
             </Slider>
