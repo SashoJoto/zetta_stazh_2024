@@ -74,7 +74,7 @@ public class UserService {
         System.out.println(responseBody);
 
         if (response.getStatus() == 201) {
-            String userId = keycloak.realm(realmName).users().search(userRepresentation.getUsername()).get(0).getId();
+            String userId = keycloak.realm(realmName).users().search(userRepresentation.getEmail()).get(0).getId();
             CredentialRepresentation credential = new CredentialRepresentation();
             credential.setType(CredentialRepresentation.PASSWORD);
             credential.setValue(registerRequest.getPassword());
@@ -305,5 +305,11 @@ public class UserService {
     public Set<User> getMatches(UUID userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return user.getMatchedUsers();
+    }
+
+    public void removeUserImage(UUID userId, Long imageId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
+        user.getImages().removeIf(image -> image.getId().equals(imageId));
+        userRepository.save(user);
     }
 }

@@ -64,26 +64,26 @@ public class UserController {
     }
 
 
-//    @DeleteMapping("/{userId}/images/{imageId}")
-//    public void removeUserImage(@PathVariable Long userId, @PathVariable Long imageId) {
-//        userService.removeUserImage(userId, imageId);
-//    }
-//
-//    @PostMapping("/{userId}/like/{likedUserId}")
-//    public ResponseEntity<String> likeUser(@PathVariable Long userId, @PathVariable Long likedUserId) {
-//        userService.likeUser(userId, likedUserId);
-//        userService.swipeUser(userId, likedUserId);
-//        return ResponseEntity.ok("User liked successfully");
-//    }
-//
-//    @GetMapping("/{id}/recommendedUsers")
-//    public Set<User> getRecommended(@PathVariable Long id) {
-//        return userService.getRecommendedUsers(id);
-//    }
-//
-//    @GetMapping("/{userId}/matches")
-//    public ResponseEntity<Set<User>> getMatches(@PathVariable Long userId) {
-//        Set<User> matches = userService.getMatches(userId);
-//        return ResponseEntity.ok(matches);
-//    }
+    @DeleteMapping("/{userId}/images/{imageId}")
+    public void removeUserImage(@PathVariable UUID userId, @PathVariable Long imageId) {
+        userService.removeUserImage(userId, imageId);
+    }
+
+    @PostMapping("/{userId}/like/{likedUserId}")
+    public ResponseEntity<String> likeUser(@PathVariable UUID userId, @PathVariable UUID likedUserId) {
+        userService.likeUser(userId, likedUserId);
+        userService.swipeUser(userId, likedUserId);
+        return ResponseEntity.ok("User liked successfully");
+    }
+
+    @GetMapping("/{id}/recommendedUsers")
+    public Set<User> getRecommended(@PathVariable UUID id) {
+        return userService.getRecommendedUsers(id);
+    }
+
+    @GetMapping("/{userId}/matches")
+    public ResponseEntity<Set<User>> getMatches(@PathVariable UUID userId) {
+        Set<User> matches = userService.getMatches(userId);
+        return ResponseEntity.ok(matches);
+    }
 }

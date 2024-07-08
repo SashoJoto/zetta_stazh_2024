@@ -14,6 +14,8 @@ import java.util.*;
 @AllArgsConstructor
 @Entity(name = "User")
 @Table(name = "user_")
+@EqualsAndHashCode(exclude = { "images", "likedUsers", "matchedUsers", "preferences", "recommended", "swiped"})
+@ToString(exclude = { "images", "likedUsers", "matchedUsers", "preferences", "recommended", "swiped" })
 public class User {
     @Id
     @Column(
