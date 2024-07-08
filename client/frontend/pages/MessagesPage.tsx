@@ -1,14 +1,19 @@
 import React from 'react';
+import Sidebar from '../components/Sidebar'
+import Chat from '../components/Chat'
 import Header from '../components/Header';
+import '../src/MessagesPage.css';
 
-const MessagesPage: React.FC = () => {
+const MessagingPage: React.FC = () => {
+    // Dummy messages data for demonstration
+
     return (
-        <div>
+        <div className="messages-page">
             <div className="container">
-                <h1>Messages Page</h1>
+
             </div>
         </div>
     );
 };
 
-export default MessagesPage;
+export default MessagingPage;

@@ -11,6 +11,12 @@ const Header: React.FC = () => {
                 <Link to="/profile">
                     <img src={profilePic} alt="Profile" className="rounded-circle" style={{ width: '30px', height: '30px' }} />
                 </Link>
+                <Link to="/login">
+                    <p>Login</p>
+                </Link>
+                <Link to="/register">
+                    <p>Register</p>
+                </Link>
                 <Link to="/">
                     <img src={logo} alt="Logo" style={{ width: '150px', height: '60px' }} />
                 </Link>
