@@ -1,3 +1,8 @@
+api:
+  version: 1
+  title: ZettaLove REST API
+  description: ZettaLove REST API
+
 server:
   error:
     include-message: always
@@ -7,6 +12,8 @@ chat:
   url: http://localhost:8082
   users_url: http://localhost:8082/users
   socket_url: ws://localhost:8082/ws
+  servlet:
+    context-path: /api/v${api.version}
 
 spring:
   datasource:
@@ -33,3 +40,23 @@ spring:
       multipart:
         max-file-size: 8MB
         max-request-size: 8MB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/ZettaKeycloak
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+jwt:
+  auth:
+    converter:
+      resource-id: zettalove-rest-api-auth
+      principle-attribute: preferred_username
+  admin-client:
+    server-url: http://localhost:8080
+    realm: ZettaKeycloak
+    client-id: zettalove-rest-api-admin
+    username: admin
+    password: admin
+    secret-key: yzVRvuhCsmuKtdSSt8NvRS0C9h9AITRA
+

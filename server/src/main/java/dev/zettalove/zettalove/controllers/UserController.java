@@ -1,19 +1,20 @@
 package dev.zettalove.zettalove.controllers;
 
-import dev.zettalove.zettalove.entities.user.UserImage;
-import dev.zettalove.zettalove.entities.user.User;
-import dev.zettalove.zettalove.services.RecommendationService;
+import dev.zettalove.zettalove.entities.User;
+import dev.zettalove.zettalove.requests.InitialInterestsRequest;
+import dev.zettalove.zettalove.requests.RegisterUserRequest;
 import dev.zettalove.zettalove.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/server/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
+    public Optional<User> getUserById(@PathVariable UUID id) {
         return userService.getUserById(id);
     }
 
@@ -34,25 +35,28 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
-    @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userService.saveUser(user);
+    @PostMapping(path = "/register")
+    public ResponseEntity<?> registerUser(
+            @RequestBody RegisterUserRequest registerRequest
+    ) {
+        userService.registerUser(registerRequest);
+        return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @PostMapping("/interests-setup")
+    public ResponseEntity<?> initialInterestsSetup(
+            @RequestBody InitialInterestsRequest request,
+            Authentication authentication
+    ) {
+        userService.initialInterestsSetup(request, authentication);
+        return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{id}/images")
-    public UserImage addUserImage(@PathVariable Long id, @RequestBody UserImage userImage) {
-        userService.addUserImage(id, userImage);
-        return userImage;
-    }
+    @PostMapping("/images-setup")
+    public ResponseEntity<?> initialImageSetup(
 
-    @GetMapping("/{id}/images")
-    public List<UserImage> getUserImages(@PathVariable Long id) {
-        return userService.getUserImages(id);
+    ) {
+        return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{userId}/images/{imageId}")

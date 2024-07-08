@@ -1,4 +1,5 @@
-package dev.zettalove.zettalove.entities.user;
+package dev.zettalove.zettalove.entities;
+
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,18 +13,23 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "UserImage")
-@Table(name = "user_image")
-public class UserImage {
+@Entity(name = "Interest")
+@Table(
+        name = "interest",
+        uniqueConstraints = {
+                @UniqueConstraint(name = "interest_name_unique", columnNames = "name"),
+        }
+)
+public class Interest {
     @Id
     @SequenceGenerator(
-            name = "user_image_sequence",
-            sequenceName = "user_image_sequence",
+            name = "interest_sequence",
+            sequenceName = "interest_sequence",
             allocationSize = 1
     )
     @GeneratedValue(
             strategy = SEQUENCE,
-            generator = "user_image_sequence"
+            generator = "interest_sequence"
     )
     @Column(
             name = "id",
@@ -32,14 +38,9 @@ public class UserImage {
     private Long id;
 
     @Column(
-            name = "image_url",
-            nullable = false
+            name = "name",
+            nullable = false,
+            unique = true
     )
-    private String imageUrl;
-
-    @Column(
-            name = "order_index",
-            nullable = false
-    )
-    private Integer orderIndex;
+    private String name;
 }
