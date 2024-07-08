@@ -66,19 +66,15 @@ public class ProfileCompletionFilter extends OncePerRequestFilter {
                     return;
                 }
 
-                if (user.getProfileStatus() == ACCOUNT_NOT_COMPLETE
+                if ((user.getProfileStatus() == ACCOUNT_NOT_COMPLETE
+                        || user.getProfileStatus() == IMAGES_MISSING
+                        || user.getProfileStatus() == INTERESTS_MISSING)
                         && (requestURI.endsWith("/images-setup" )
                         || requestURI.endsWith("/interests-setup")))  {
                     filterChain.doFilter(request, response);
                     return;
                 }
-                else if (user.getProfileStatus() == IMAGES_MISSING && requestURI.endsWith("/images-setup")) {
-                    filterChain.doFilter(request, response);
-                    return;
-                } else if (user.getProfileStatus() == INTERESTS_MISSING && requestURI.endsWith("/interests-setup")) {
-                    filterChain.doFilter(request, response);
-                    return;
-                }
+
 
                 switch (user.getProfileStatus()) {
                     case ACTIVE:

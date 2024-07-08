@@ -1,7 +1,7 @@
 package dev.zettalove.zettalove.services;
 
-import dev.zettalove.zettalove.entities.preference.Preference;
-import dev.zettalove.zettalove.entities.user.User;
+import dev.zettalove.zettalove.entities.Interest;
+import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -22,15 +22,15 @@ public class RecommendationService {
         List<User> allUsers = userRepository.findAll(); // Consider pagination or batch processing for large datasets
         Set<User> swipedUsers = user.getSwiped(); // Ensure this is fetched within the transaction
 
-        List<Preference> userPreferences = user.getPreferences();
-        LocalDate userMinDateOfBirth = calculateDateOfBirth(user.getMaxAge());
-        LocalDate userMaxDateOfBirth = calculateDateOfBirth(user.getMinAge());
+        Set<Interest> userPreferences = user.getInterests();
+        LocalDate userMinDateOfBirth = calculateDateOfBirth(user.getDesiredMinAge());
+        LocalDate userMaxDateOfBirth = calculateDateOfBirth(user.getDesiredMaxAge());
 
         List<User> recommendedUsers = allUsers.stream()
                 .filter(other -> !user.equals(other))
                 .filter(other -> !swipedUsers.contains(other))
                 .filter(other -> isAgeCompatible(other.getDateOfBirth(), userMinDateOfBirth, userMaxDateOfBirth))
-                .filter(other -> hasMatchingPreferences(userPreferences, other.getPreferences()))
+                .filter(other -> hasMatchingPreferences(userPreferences, other.getInterests()))
                 .collect(Collectors.toList());
 
         user.getRecommended().addAll(recommendedUsers);
@@ -44,9 +44,9 @@ public class RecommendationService {
     }
 
 
-    private boolean hasMatchingPreferences(List<Preference> userPreferences, List<Preference> otherPreferences) {
-        Set<String> userPreferenceNames = userPreferences.stream().map(Preference::getName).collect(Collectors.toSet());
-        Set<String> otherPreferenceNames = otherPreferences.stream().map(Preference::getName).collect(Collectors.toSet());
+    private boolean hasMatchingPreferences(Set<Interest> userPreferences, Set<Interest> otherPreferences) {
+        Set<String> userPreferenceNames = userPreferences.stream().map(Interest::getName).collect(Collectors.toSet());
+        Set<String> otherPreferenceNames = otherPreferences.stream().map(Interest::getName).collect(Collectors.toSet());
         return !Collections.disjoint(userPreferenceNames, otherPreferenceNames);
     }
 
@@ -58,18 +58,5 @@ public class RecommendationService {
 
     private LocalDate calculateDateOfBirth(int age) {
         return LocalDate.now().minusYears(age);
-    }
-
-    public List<User> getRecommendedUsers(Long userId) {
-        String recommendedUserIds = redisTemplate.opsForValue().get(userId.toString());
-        if (recommendedUserIds == null || recommendedUserIds.isEmpty()) {
-            return Collections.emptyList();
-        }
-        return Arrays.stream(recommendedUserIds.split(","))
-                .map(Long::parseLong)
-                .map(userRepository::findById)
-                .filter(Optional::isPresent)
-                .map(Optional::get)
-                .collect(Collectors.toList());
     }
 }

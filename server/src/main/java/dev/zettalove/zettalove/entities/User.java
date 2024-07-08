@@ -106,17 +106,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "swiped_user_id"))
     private Set<User> swiped = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "user_id")
     private List<UserImage> images;
-
-    public void addImage(UserImage image) {
-        images.add(image);
-    }
-
-    public void removeImage(UserImage image) {
-        images.remove(image);
-    }
 
     @PrePersist
     private void defaultValues() {
