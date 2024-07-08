@@ -8,6 +8,7 @@ import dev.zettalove.zettalove.entities.Interest;
 import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.enums.UserStatus;
 import dev.zettalove.zettalove.exceptions.accountsetup.InterestNotFoundException;
+import dev.zettalove.zettalove.exceptions.accountsetup.InterestSetupDoneException;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailFormatException;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailTakenException;
 import dev.zettalove.zettalove.repositories.InterestRepository;
@@ -124,6 +125,10 @@ public class UserService {
         User user = userRepository.findById(getSubjectIdFromAuthentication(authentication))
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if(user.getProfileStatus().equals(UserStatus.ACTIVE) || user.getProfileStatus().equals(UserStatus.IMAGES_MISSING)){
+            throw new InterestSetupDoneException();
+        }
+
         Set<Interest> userInterests = new HashSet<Interest>();
 
         for (String interestName : request.getInterests()) {
@@ -150,7 +155,6 @@ public class UserService {
 
         userRepository.save(user);
     }
-
 
 
 

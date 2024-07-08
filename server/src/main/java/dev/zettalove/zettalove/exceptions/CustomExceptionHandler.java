@@ -1,5 +1,8 @@
 package dev.zettalove.zettalove.exceptions;
 
+import dev.zettalove.zettalove.exceptions.accountsetup.AccountSetupException;
+import dev.zettalove.zettalove.exceptions.accountsetup.InterestNotFoundException;
+import dev.zettalove.zettalove.exceptions.accountsetup.InterestSetupDoneException;
 import dev.zettalove.zettalove.exceptions.accountstatus.*;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailFormatException;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailTakenException;
@@ -88,6 +91,34 @@ public class CustomExceptionHandler {
 
         return problemDetail;
     }
+
+    @ExceptionHandler(AccountSetupException.class)
+    public ProblemDetail handleAccountSetupException(AccountSetupException e) {
+        ProblemDetail problemDetail = ProblemDetail
+                .forStatusAndDetail(
+                        HttpStatusCode.valueOf(500), e.toString());
+
+        if (e instanceof InterestSetupDoneException) {
+            problemDetail = ProblemDetail
+                    .forStatusAndDetail(
+                            HttpStatus.FORBIDDEN, e.getMessage());
+            problemDetail.setProperty(
+                    "error", "interest_setup_done"
+            );
+        } else if (e instanceof InterestNotFoundException) {
+            problemDetail = ProblemDetail
+                    .forStatusAndDetail(
+                            HttpStatus.BAD_REQUEST, e.getMessage());
+            problemDetail.setProperty(
+                    "error", "interest_not_found"
+            );
+        }
+
+        e.printStackTrace();
+
+        return problemDetail;
+    }
+
 
     @ExceptionHandler(Exception.class)
     public ProblemDetail handleNonCustomException(Exception e) {

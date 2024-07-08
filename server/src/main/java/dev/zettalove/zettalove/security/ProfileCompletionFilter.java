@@ -60,6 +60,12 @@ public class ProfileCompletionFilter extends OncePerRequestFilter {
                 });
 
                 String requestURI = request.getRequestURI();
+
+                if (requestURI.endsWith("/users")) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 if (user.getProfileStatus() == ACCOUNT_NOT_COMPLETE
                         && (requestURI.endsWith("/images-setup" )
                         || requestURI.endsWith("/interests-setup")))  {
