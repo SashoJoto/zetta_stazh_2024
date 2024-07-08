@@ -1,6 +1,6 @@
 //package dev.zettalove.zettalove.controllers;
 //
-//import dev.zettalove.zettalove.entities.user.User;
+//import dev.zettalove.zettalove.entities.User;
 //import dev.zettalove.zettalove.services.RecommendationService;
 //import dev.zettalove.zettalove.services.UserService;
 //import lombok.RequiredArgsConstructor;

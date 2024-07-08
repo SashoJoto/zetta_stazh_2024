@@ -1,7 +1,7 @@
-package dev.zettalove.zettalove.entities.user;
+package dev.zettalove.zettalove.entities;
 
-import dev.zettalove.zettalove.entities.gender.Gender;
-import dev.zettalove.zettalove.entities.preference.Preference;
+import dev.zettalove.zettalove.enums.Gender;
+import dev.zettalove.zettalove.enums.GenderPreference;
 import dev.zettalove.zettalove.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,54 +30,46 @@ public class User {
     private UserStatus profileStatus;
 
     @Column(
-            name = "date_of_birth",
-            nullable = false
+            name = "date_of_birth"
     )
     private Date dateOfBirth;
 
     @Column(
-            name = "description",
-            nullable = false
+            name = "description"
     )
     private String description;
 
     @Column(
-            name = "address",
-            nullable = false
+            name = "address"
     )
     private String address;
 
     @Column(
-            name = "phone_number",
-            nullable = false
+            name = "phone_number"
     )
     private String phoneNumber;
 
     @Column(
-            name = "min_age",
-            nullable = false
+            name = "desired_min_age"
     )
-    private Integer minAge = 18;  // Default value
+    private Integer desiredMinAge;
 
     @Column(
-            name = "max_age",
-            nullable = false
+            name = "desired_max_age"
     )
-    private Integer maxAge = 99;  // Default value
+    private Integer desiredMaxAge;
 
-    @ManyToOne
-    @JoinColumn(
-            name = "gender_id",
-            nullable = false
+    @Column(
+            name = "gender"
     )
+    @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    @ManyToOne
-    @JoinColumn(
-            name = "desired_gender_id",
-            nullable = false
+    @Column(
+            name = "desired_gender"
     )
-    private Gender desiredGender;
+    @Enumerated(EnumType.STRING)
+    private GenderPreference desiredGender;
 
     @ManyToMany
     @JoinTable(
@@ -95,10 +87,10 @@ public class User {
 
     @ManyToMany
     @JoinTable(
-            name = "user_preferences",
+            name = "user_interests",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "preference_id"))
-    private List<Preference> preferences;
+            inverseJoinColumns = @JoinColumn(name = "interest_id"))
+    private Set<Interest> interests;
 
     @ManyToMany
     @JoinTable(
@@ -128,7 +120,7 @@ public class User {
 
     @PrePersist
     private void defaultValues() {
-        profileStatus = UserStatus.PREFERENCES_MISSING;
+        profileStatus = UserStatus.ACCOUNT_NOT_COMPLETE;
     }
 
 }

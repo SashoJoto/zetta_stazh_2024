@@ -1,7 +1,14 @@
+api:
+  version: 1
+  title: ZettaLove REST API
+  description: ZettaLove REST API
+
 server:
   error:
     include-message: always
   port: 8081
+  servlet:
+    context-path: /api/v${api.version}
 
 spring:
   datasource:
@@ -29,12 +36,6 @@ spring:
           issuer-uri: http://localhost:8080/realms/ZettaKeycloak
           jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
 
-api:
-  version: 1
-  title: ZettaLove REST API
-  description: ZettaLove REST API
-  start-url: api/v${api.version}
-
 jwt:
   auth:
     converter:
@@ -47,3 +48,4 @@ jwt:
     username: admin
     password: admin
     secret-key: yzVRvuhCsmuKtdSSt8NvRS0C9h9AITRA
+

@@ -1,40 +1,61 @@
 package dev.zettalove.zettalove.controllers;
 
-import dev.zettalove.zettalove.entities.user.UserImage;
-import dev.zettalove.zettalove.entities.user.User;
+import dev.zettalove.zettalove.entities.User;
+import dev.zettalove.zettalove.requests.InitialInterestsRequest;
 import dev.zettalove.zettalove.requests.RegisterUserRequest;
-import dev.zettalove.zettalove.security.KeycloakProvider;
 import dev.zettalove.zettalove.services.UserService;
-import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("${api.start-url}/user")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
-
-    @PostMapping(path = "/register")
-    public ResponseEntity<?> test(
-            @RequestBody RegisterUserRequest registerRequest
-    ) {
-        Response res = userService.registerUser(registerRequest);
-        return ResponseEntity.ok("User registered successfully");
+    @GetMapping
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
     }
 
-//    @PostMapping
-//    public User createUser(@RequestBody User user) {
-//        return userService.saveUser(user);
-//    }
-//
+    @GetMapping("/{id}")
+    public Optional<User> getUserById(@PathVariable UUID id) {
+        return userService.getUserById(id);
+    }
+
+
+    @PostMapping(path = "/register")
+    public ResponseEntity<?> registerUser(
+            @RequestBody RegisterUserRequest registerRequest
+    ) {
+        userService.registerUser(registerRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/interests-setup")
+    public ResponseEntity<?> initialInterestsSetup(
+            @RequestBody InitialInterestsRequest request,
+            Authentication authentication
+    ) {
+        userService.initialInterestsSetup(request, authentication);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/images-setup")
+    public ResponseEntity<?> initialImageSetup(
+
+    ) {
+        return ResponseEntity.ok().build();
+    }
+
+
+
 //    @DeleteMapping("/{id}")
 //    public void deleteUser(@PathVariable Long id) {
 //        userService.deleteUser(id);

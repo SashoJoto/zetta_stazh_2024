@@ -2,6 +2,8 @@ package dev.zettalove.zettalove.enums;
 
 public enum UserStatus {
     ACTIVE,
-    PREFERENCES_MISSING,
+    ACCOUNT_NOT_COMPLETE,
+    INTERESTS_MISSING,
+    IMAGES_MISSING,
     DEACTIVATED,
 }

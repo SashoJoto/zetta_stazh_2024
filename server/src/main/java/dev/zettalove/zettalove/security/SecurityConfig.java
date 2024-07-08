@@ -1,6 +1,8 @@
 package dev.zettalove.zettalove.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,6 +11,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
 
 @Configuration
 @EnableWebSecurity
@@ -16,17 +20,23 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final KeycloakJwtAuthenticationConverter keycloakJwtAuthenticationConverter;
+    @Autowired
+    @Qualifier("handlerExceptionResolver")
+    private HandlerExceptionResolver exceptionHandle;
 
-    @Value("${api.start-url}")
-    private String apiStartUrl;
+    private final KeycloakJwtAuthenticationConverter keycloakJwtAuthenticationConverter;
+    private final ProfileCompletionFilter profileCompletionFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(
-                                apiStartUrl + "/user/register"
+                                "/users/register",
+                                        "/v3/api-docs/**",
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html"
+
                                 )
                                     .permitAll()
                                 .anyRequest()
@@ -36,7 +46,9 @@ public class SecurityConfig {
                         auth.jwt(token ->
                                 token.jwtAuthenticationConverter(keycloakJwtAuthenticationConverter)
                         )
-                );
+                )
+                .addFilterAfter(profileCompletionFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 }

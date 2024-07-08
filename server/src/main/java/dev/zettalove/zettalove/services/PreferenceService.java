@@ -1,7 +1,7 @@
 package dev.zettalove.zettalove.services;
 
-import dev.zettalove.zettalove.entities.preference.Preference;
-import dev.zettalove.zettalove.repositories.PreferenceRepository;
+import dev.zettalove.zettalove.entities.Interest;
+import dev.zettalove.zettalove.repositories.InterestRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,21 +11,21 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class PreferenceService {
-    private final PreferenceRepository preferenceRepository;
+    private final InterestRepository interestRepository;
 
-    public List<Preference> getAllPreferences() {
-        return preferenceRepository.findAll();
+    public List<Interest> getAllPreferences() {
+        return interestRepository.findAll();
     }
 
-    public Optional<Preference> getPreferenceById(Long id) {
-        return preferenceRepository.findById(id);
+    public Optional<Interest> getPreferenceById(Long id) {
+        return interestRepository.findById(id);
     }
 
-    public Preference savePreference(Preference preference) {
-        return preferenceRepository.save(preference);
+    public Interest savePreference(Interest interest) {
+        return interestRepository.save(interest);
     }
 
     public void deletePreference(Long id) {
-        preferenceRepository.deleteById(id);
+        interestRepository.deleteById(id);
     }
 }
