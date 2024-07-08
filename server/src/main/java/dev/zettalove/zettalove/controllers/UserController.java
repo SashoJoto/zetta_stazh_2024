@@ -5,7 +5,6 @@ import dev.zettalove.zettalove.entities.user.User;
 import dev.zettalove.zettalove.services.RecommendationService;
 import dev.zettalove.zettalove.services.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,13 +63,13 @@ public class UserController {
     @PostMapping("/{userId}/like/{likedUserId}")
     public ResponseEntity<String> likeUser(@PathVariable Long userId, @PathVariable Long likedUserId) {
         userService.likeUser(userId, likedUserId);
+        userService.swipeUser(userId, likedUserId);
         return ResponseEntity.ok("User liked successfully");
     }
 
-    @GetMapping("/{id}/recommendations")
-    public void generateRecommendations(@PathVariable Long id) {
-        Optional<User> user = userService.getUserById(id);
-        user.ifPresent(recommendationService::getRecommendedProfiles);
+    @GetMapping("/{id}/recommendedUsers")
+    public Set<User> getRecommended(@PathVariable Long id) {
+        return userService.getRecommendedUsers(id);
     }
 
     @GetMapping("/{userId}/matches")

@@ -9,10 +9,12 @@ import dev.zettalove.zettalove.entities.user.User;
 import dev.zettalove.zettalove.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,6 +22,8 @@ public class UserService {
     private final UserRepository userRepository;
     private final RestTemplate restTemplate;
     private final WebSocketClientService webSocketClientService;
+    private final StringRedisTemplate redisTemplate;
+    private final RecommendationService recommendationService;
 
     @Value("${chat.url}")
     private String chatUrl;
@@ -135,6 +139,30 @@ public class UserService {
         webSocketClientService.sendMessage(chatMessage);
         webSocketClientService.sendMessage(chatMessage2);
     }
+
+    public Set<User> getRecommendedUsers(Long userId) {
+        User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+        Set<User> recommendedUsers = user.getRecommended();
+
+        // Check Redis for cached recommendations
+        String recommendedUserIds = redisTemplate.opsForValue().get(String.valueOf(userId));
+        if (recommendedUserIds != null && !recommendedUserIds.isEmpty()) {
+            recommendedUsers = Arrays.stream(recommendedUserIds.split(","))
+                    .map(Long::parseLong)
+                    .map(id -> userRepository.findById(id)
+                            .orElseThrow(() -> new RuntimeException("User not found")))
+                    .collect(Collectors.toSet());
+        } else if (recommendedUsers.isEmpty()) {
+            // If no cached recommendations, trigger recommendations and get from the database
+            recommendationService.triggerRecommendations(user);
+            recommendedUsers = user.getRecommended();
+        }
+
+        return recommendedUsers;
+    }
+
+
 
     public Set<User> getMatches(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
