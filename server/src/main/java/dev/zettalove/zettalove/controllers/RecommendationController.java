@@ -20,6 +20,6 @@ public class RecommendationController {
     @GetMapping("/{id}")
     public void generateRecommendations(@PathVariable Long id) {
         Optional<User> user = userService.getUserById(id);
-        user.ifPresent(recommendationService::getRecommendedProfiles);
+        user.ifPresent(recommendationService::triggerRecommendations);
     }
 }

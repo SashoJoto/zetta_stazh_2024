@@ -44,7 +44,6 @@ services:
   
   mongodb:
     image: mongo
-    container_name: mongo_db
     ports:
       - 27018:27017
     volumes:
@@ -64,6 +63,17 @@ services:
     depends_on:
       - mongodb
 
+  cache:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6381:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    volumes: 
+      - cache:/data
+
 volumes:
   postgres_data:
   mongo:
+  cache:
+    driver: local
