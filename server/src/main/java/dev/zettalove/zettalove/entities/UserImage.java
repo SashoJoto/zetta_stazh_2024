@@ -32,10 +32,11 @@ public class UserImage {
     private Long id;
 
     @Column(
-            name = "image_url",
+            name = "image",
             nullable = false
     )
-    private String imageUrl;
+    @Lob
+    private byte[] imageBase64;
 
     @Column(
             name = "order_index",

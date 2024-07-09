@@ -3,6 +3,7 @@ package dev.zettalove.zettalove.controllers;
 import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.requests.InitialInterestsRequest;
 import dev.zettalove.zettalove.requests.RegisterUserRequest;
+//import dev.zettalove.zettalove.services.RecommendationService;
 import dev.zettalove.zettalove.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 @RestController
@@ -18,22 +20,18 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final RecommendationService recommendationService;
+//    private final RecommendationService recommendationService;
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
     @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable UUID id) {
-        return userService.getUserById(id);
+    public ResponseEntity<?> getUserById(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @GetMapping("/email/{email}")
-    public User getUserByEmail(@PathVariable String email) {
-        return userService.getUserByEmail(email);
-    }
 
     @PostMapping(path = "/register")
     public ResponseEntity<?> registerUser(
@@ -54,30 +52,37 @@ public class UserController {
 
     @PostMapping("/images-setup")
     public ResponseEntity<?> initialImageSetup(
-
+            @RequestBody String[] images,
+            Authentication authentication
     ) {
+        userService.initialImageSetup(images, authentication);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping("/{userId}/images/{imageId}")
-    public void removeUserImage(@PathVariable Long userId, @PathVariable Long imageId) {
-        userService.removeUserImage(userId, imageId);
+
+    @DeleteMapping("/images/{imageId}")
+    public ResponseEntity<?> removeUserImage(
+            @PathVariable Long imageId,
+            Authentication authentication
+    ) {
+        userService.removeUserImage(imageId, authentication);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{userId}/like/{likedUserId}")
-    public ResponseEntity<String> likeUser(@PathVariable Long userId, @PathVariable Long likedUserId) {
+    public ResponseEntity<String> likeUser(@PathVariable UUID userId, @PathVariable UUID likedUserId) {
         userService.likeUser(userId, likedUserId);
         userService.swipeUser(userId, likedUserId);
         return ResponseEntity.ok("User liked successfully");
     }
 
     @GetMapping("/{id}/recommendedUsers")
-    public Set<User> getRecommended(@PathVariable Long id) {
+    public Set<User> getRecommended(@PathVariable UUID id) {
         return userService.getRecommendedUsers(id);
     }
 
     @GetMapping("/{userId}/matches")
-    public ResponseEntity<Set<User>> getMatches(@PathVariable Long userId) {
+    public ResponseEntity<Set<User>> getMatches(@PathVariable UUID userId) {
         Set<User> matches = userService.getMatches(userId);
         return ResponseEntity.ok(matches);
     }
