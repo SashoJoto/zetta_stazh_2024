@@ -4,9 +4,10 @@ import Header from '../components/Header';
 import DatingPage from '../pages/DatingPage';
 import MessagesPage from '../pages/MessagesPage';
 import ProfilePage from '../pages/ProfilePage';
+import LoginPage from '../pages/LoginPage';
+import RegisterPage from '../pages/RegisterPage';
+import PrivateRoute from '../components/PrivateRoute';
 import { useAuth } from '../contexts/AuthContext';
-import LoginPage from '../pages/LoginPage'
-import RegisterPage from '../pages/RegisterPage'
 
 const App: React.FC = () => {
     const { user } = useAuth();
@@ -15,11 +16,11 @@ const App: React.FC = () => {
         <div style={{ minHeight: '100vh' }}>
             <Header />
             <Routes>
-                <Route path="/" element={<DatingPage />} />
-                <Route path="/messages" element={<MessagesPage />} />
-                <Route path="/profile" element={<ProfilePage/>} />
-                <Route path="/login" element={<LoginPage/>}/>
-                <Route path="/register" element={<RegisterPage/>}/>
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/register" element={<RegisterPage />} />
+                <Route path="/" element={user ? <DatingPage /> : <Navigate to="/login" />} />
+                <Route path="/messages" element={<PrivateRoute component={MessagesPage} />} />
+                <Route path="/profile" element={<PrivateRoute component={ProfilePage} />} />
             </Routes>
         </div>
     );

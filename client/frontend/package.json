@@ -19,6 +19,7 @@
     "@types/hammerjs": "^2.0.45",
     "@types/react-datepicker": "^6.2.0",
     "@types/react-router-dom": "^5.3.3",
+    "axios": "^1.7.2",
     "bootstrap": "^5.3.3",
     "hammerjs": "^2.0.8",
     "react": "^18.3.1",

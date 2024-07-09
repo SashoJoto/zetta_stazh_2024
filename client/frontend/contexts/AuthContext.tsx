@@ -1,37 +1,24 @@
-// src/contexts/AuthContext.tsx
 import React, { createContext, useContext, useState, ReactNode } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 interface AuthContextType {
-    user: User | null;
-    login: (userData: User) => void;
+    user: any;
+    login: (user: any) => void;
     logout: () => void;
-}
-
-interface User {
-    firstName: string;
-    lastName: string;
-    email: string;
-    age: string;
-    sex: string;
-    bio: string;
-    image: File | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const navigate = useNavigate();
-    const [user, setUser] = useState<User | null>(null);
+const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [user, setUser] = useState<any>(null);
 
-    const login = (userData: User) => {
+    const login = (userData: any) => {
         setUser(userData);
-        navigate('/profile');
+        // You can also save the user data to localStorage/sessionStorage if needed
     };
 
     const logout = () => {
         setUser(null);
-        navigate('/login');
+        // You can also remove the user data from localStorage/sessionStorage if needed
     };
 
     return (
@@ -41,10 +28,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     );
 };
 
-export const useAuth = () => {
+const useAuth = () => {
     const context = useContext(AuthContext);
-    if (!context) {
+    if (context === undefined) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;
 };
+
+export { AuthProvider, useAuth };

@@ -1,13 +1,8 @@
 import React, { useState } from 'react';
-import '../src/ProfilePage.css'; // Import your CSS file for styling
+import '../src/ProfilePage.css';
 
 const ProfilePage: React.FC = () => {
-    return (/*
-        <div className="container" style={{alignContent:'center', justifyContent:'center'}}>
-            <div className="profile-page-container">
-                <img src="../src/assets/profile_pic_empty.png" alt="profile pic"/>
-            </div>
-        </div>*/
+    return (
         <div className="page-content page-container" id="page-content">
             <div className="padding">
                 <div className="row container d-flex justify-content-center">
@@ -21,7 +16,8 @@ const ProfilePage: React.FC = () => {
                                                  className="img-radius" alt="User-Profile-Image"/>
                                         </div>
                                         <h6 className="f-w-600" style={{color:'black'}}>Toni kalashnika</h6>
-                                        <p style={{color:'black'}}>Web Designer</p>
+                                        <p style={{color:'black'}}>Interests:</p>
+                                        <p style={{color:'black', fontSize:'10px'}}>Reading, Wanking, Boxing</p>
                                         <i className=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
                                     </div>
                                 </div>
