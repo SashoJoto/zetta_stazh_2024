@@ -21,6 +21,10 @@ spring:
     username: dev
     password: 1234a
     driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
   cache:
     type: redis
   data:

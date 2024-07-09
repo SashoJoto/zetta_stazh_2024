@@ -308,7 +308,7 @@ public class UserService {
                     .collect(Collectors.toSet());
         } else if (recommendedUsers.isEmpty()) {
             // If no cached recommendations, trigger recommendations and get from the database
-            recommendationService.triggerRecommendations(user);
+            recommendationService.triggerRecommendations(userId);
             recommendedUsers = user.getRecommended();
         }
 
