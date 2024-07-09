@@ -13,23 +13,24 @@ const LoginPage: React.FC = () => {
         e.preventDefault();
         setError('');
 
+        const params = new URLSearchParams();
+        params.append('username', username);
+        params.append('password', password);
+        params.append('grant_type', 'password');
+        params.append('client_id', 'your-client-id');
+        params.append('client_secret', 'your-client-secret'); // include this if required
+
         try {
-            const response = await axios.post('http://localhost:8080/realms/ZettaKeycloak/protocol/openid-connect/token', {
-                username,
-                password,
-                grant_type: 'password',
-                client_id: 'your-client-id',
-                client_secret: 'your-client-secret'
-            }, {
+            const response = await axios.post('http://localhost:8080/realms/ZettaKeycloak/protocol/openid-connect/token', params, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             });
 
-            // Handle the response, e.g., save the token and user information
             const { access_token } = response.data;
+
             // Save the token (e.g., in localStorage or context)
-            // localStorage.setItem('token', access_token);
+            localStorage.setItem('token', access_token);
 
             // Navigate to the main page after successful login
             navigate('/');
