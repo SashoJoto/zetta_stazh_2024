@@ -60,9 +60,13 @@ public class UserController {
     }
 
 
-    @DeleteMapping("/{userId}/images/{imageId}")
-    public void removeUserImage(@PathVariable UUID userId, @PathVariable Long imageId) {
-        userService.removeUserImage(userId, imageId);
+    @DeleteMapping("/images/{imageId}")
+    public ResponseEntity<?> removeUserImage(
+            @PathVariable Long imageId,
+            Authentication authentication
+    ) {
+        userService.removeUserImage(imageId, authentication);
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("/{userId}/like/{likedUserId}")

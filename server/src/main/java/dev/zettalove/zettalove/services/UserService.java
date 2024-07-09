@@ -19,6 +19,8 @@ import dev.zettalove.zettalove.exceptions.accountsetup.InterestSetupDoneExceptio
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailFormatException;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailTakenException;
 import dev.zettalove.zettalove.exceptions.userexceptions.UserNotFoundException;
+import dev.zettalove.zettalove.exceptions.userimageexceptions.UserImageCouldNotBeRemovedException;
+import dev.zettalove.zettalove.exceptions.userimageexceptions.UserImageNotFoundException;
 import dev.zettalove.zettalove.repositories.InterestRepository;
 import dev.zettalove.zettalove.repositories.UserRepository;
 import dev.zettalove.zettalove.requests.InitialInterestsRequest;
@@ -194,9 +196,25 @@ public class UserService {
         return user.map(UserDto::new).orElseThrow(() -> new UserNotFoundException(id));
     }
 
-//    public User getUserByEmail(String email) {
-//        return userRepository.findByEmail(email);
-//    }
+    @Transactional
+    public void removeUserImage(Long imageId, Authentication authentication) {
+        UUID userId = getSubjectIdFromAuthentication(authentication);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+
+        Optional<UserImage> imageToRemove = user.getImages().stream()
+                .filter(image -> image.getId().equals(imageId))
+                .findFirst();
+
+        if (imageToRemove.isPresent()) {
+            if (user.getImages().size() <= 1) {
+                throw new UserImageCouldNotBeRemovedException();
+            }
+            user.getImages().remove(imageToRemove.get());
+            userRepository.save(user);
+        } else {
+            throw new UserImageNotFoundException(imageId);
+        }
+    }
 
     public User saveUser(User user) {
         User savedUser = userRepository.save(user);
@@ -257,6 +275,7 @@ public class UserService {
         user.getRecommended().remove(swipedUser);
         userRepository.save(user);
     }
+
      public void notifyUsersForMatch(User user, User likedUser) {
         // Fetch user ids from chat service
         ChatUser user1 = restTemplate.getForObject(chatUrl + "/users/" + user.getId(), ChatUser.class);
@@ -320,11 +339,5 @@ public class UserService {
     public Set<User> getMatches(UUID userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
         return user.getMatchedUsers();
-    }
-
-    public void removeUserImage(UUID userId, Long imageId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        user.getImages().removeIf(image -> image.getId().equals(imageId));
-        userRepository.save(user);
     }
 }
