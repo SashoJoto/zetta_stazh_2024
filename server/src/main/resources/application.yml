@@ -1,7 +1,14 @@
+api:
+  version: 1
+  title: ZettaLove REST API
+  description: ZettaLove REST API
+
 server:
   error:
     include-message: always
   port: 8081
+  servlet:
+    context-path: /api/v${api.version}
 
 chat:
   url: http://localhost:8082
@@ -14,6 +21,10 @@ spring:
     username: dev
     password: 1234a
     driver-class-name: org.postgresql.Driver
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
   cache:
     type: redis
   data:
@@ -33,3 +44,23 @@ spring:
       multipart:
         max-file-size: 8MB
         max-request-size: 8MB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/ZettaKeycloak
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+
+jwt:
+  auth:
+    converter:
+      resource-id: zettalove-rest-api-auth
+      principle-attribute: preferred_username
+  admin-client:
+    server-url: http://localhost:8080
+    realm: ZettaKeycloak
+    client-id: zettalove-rest-api-admin
+    username: admin
+    password: admin
+    secret-key: BtQAeYZAhd3FuhkSTyUTNDZQ4Bee9H2u
+
