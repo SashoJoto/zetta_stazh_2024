@@ -1,6 +1,7 @@
 package dev.zettalove.zettalove.exceptions;
 
 import dev.zettalove.zettalove.exceptions.accountsetup.AccountSetupException;
+import dev.zettalove.zettalove.exceptions.accountsetup.ImagesSetupDoneException;
 import dev.zettalove.zettalove.exceptions.accountsetup.InterestNotFoundException;
 import dev.zettalove.zettalove.exceptions.accountsetup.InterestSetupDoneException;
 import dev.zettalove.zettalove.exceptions.accountstatus.*;
@@ -111,6 +112,13 @@ public class CustomExceptionHandler {
                             HttpStatus.BAD_REQUEST, e.getMessage());
             problemDetail.setProperty(
                     "error", "interest_not_found"
+            );
+        } else if (e instanceof ImagesSetupDoneException) {
+            problemDetail = ProblemDetail
+                    .forStatusAndDetail(
+                            HttpStatus.FORBIDDEN, e.getMessage());
+            problemDetail.setProperty(
+                    "error", "images_setup_done"
             );
         }
 

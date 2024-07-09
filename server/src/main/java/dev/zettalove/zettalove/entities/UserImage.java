@@ -36,7 +36,7 @@ public class UserImage {
             nullable = false
     )
     @Lob
-    private String imageBase64;
+    private byte[] imageBase64;
 
     @Column(
             name = "order_index",

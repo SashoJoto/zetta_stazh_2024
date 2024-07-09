@@ -18,7 +18,8 @@ public class RecommendationService {
     private final UserRepository userRepository;
     private final StringRedisTemplate redisTemplate;
 
-    public void triggerRecommendations(User user) {
+    public void triggerRecommendations(UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
         List<User> allUsers = userRepository.findAll(); // Consider pagination or batch processing for large datasets
         Set<User> swipedUsers = user.getSwiped(); // Ensure this is fetched within the transaction
 

@@ -23,19 +23,15 @@ public class UserController {
 //    private final RecommendationService recommendationService;
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<?> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-//    @GetMapping("/{id}")
-//    public Optional<User> getUserById(@PathVariable UUID id) {
-//        return userService.getUserById(id);
-//    }
-//
-//    @GetMapping("/email/{email}")
-//    public User getUserByEmail(@PathVariable String email) {
-//        return userService.getUserByEmail(email);
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable UUID id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
 
     @PostMapping(path = "/register")
     public ResponseEntity<?> registerUser(

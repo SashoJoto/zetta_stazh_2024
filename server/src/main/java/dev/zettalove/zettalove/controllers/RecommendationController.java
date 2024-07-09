@@ -1,5 +1,6 @@
 package dev.zettalove.zettalove.controllers;
 
+import dev.zettalove.zettalove.dto.UserDto;
 import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.services.RecommendationService;
 import dev.zettalove.zettalove.services.UserService;
@@ -18,9 +19,10 @@ import java.util.UUID;
 public class RecommendationController {
     private final UserService userService;
     private final RecommendationService recommendationService;
+
     @GetMapping("/{id}")
     public void generateRecommendations(@PathVariable UUID id) {
-        Optional<User> user = userService.getUserById(id);
-        user.ifPresent(recommendationService::triggerRecommendations);
+        UserDto user = userService.getUserById(id);
+        recommendationService.triggerRecommendations(user.getId());
     }
 }

@@ -7,14 +7,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.zettalove.zettalove.chat.entities.ChatMessage;
 import dev.zettalove.zettalove.chat.entities.ChatUser;
+import dev.zettalove.zettalove.dto.UserDto;
 import dev.zettalove.zettalove.entities.Interest;
 import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.entities.UserImage;
 import dev.zettalove.zettalove.enums.UserStatus;
+import dev.zettalove.zettalove.exceptions.accountsetup.ImageCountException;
+import dev.zettalove.zettalove.exceptions.accountsetup.ImagesSetupDoneException;
 import dev.zettalove.zettalove.exceptions.accountsetup.InterestNotFoundException;
 import dev.zettalove.zettalove.exceptions.accountsetup.InterestSetupDoneException;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailFormatException;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailTakenException;
+import dev.zettalove.zettalove.exceptions.userexceptions.UserNotFoundException;
 import dev.zettalove.zettalove.repositories.InterestRepository;
 import dev.zettalove.zettalove.repositories.UserRepository;
 import dev.zettalove.zettalove.requests.InitialInterestsRequest;
@@ -146,37 +150,48 @@ public class UserService {
         userRepository.save(user);
     }
 
-    //TODO FIX BUG
     @Transactional
     public void initialImageSetup(String[] images, Authentication authentication) {
+
+        if (images.length < 1 || images.length > 3) {
+            throw new ImageCountException();
+        }
+
         UUID userId = getSubjectIdFromAuthentication(authentication);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        if (user.getProfileStatus() == UserStatus.ACTIVE || user.getProfileStatus() == UserStatus.INTERESTS_MISSING){
+            throw new ImagesSetupDoneException();
+        }
+
         List<UserImage> userImages = Arrays.stream(images)
                 .map(image -> UserImage.builder()
-                        .imageBase64(image)
+                        .imageBase64(image.getBytes())
                         .orderIndex(Arrays.asList(images).indexOf(image))
                         .build())
                 .collect(Collectors.toList());
 
         user.getImages().addAll(userImages);
 
-        if (user.getProfileStatus() == UserStatus.IMAGES_MISSING || user.getProfileStatus() == UserStatus.ACCOUNT_NOT_COMPLETE) {
+        if (user.getProfileStatus() == UserStatus.IMAGES_MISSING) {
             user.setProfileStatus(UserStatus.ACTIVE);
+        }else if (user.getProfileStatus() == UserStatus.ACCOUNT_NOT_COMPLETE){
+            user.setProfileStatus(UserStatus.INTERESTS_MISSING);
         }
 
         userRepository.save(user);
     }
 
-
-
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(UserDto::new)
+                .collect(Collectors.toList());
     }
 
-    public Optional<User> getUserById(UUID id) {
-        return userRepository.findById(id);
+    public UserDto getUserById(UUID id) {
+        Optional<User> user = userRepository.findById(id);
+        return user.map(UserDto::new).orElseThrow(() -> new UserNotFoundException(id));
     }
 
 //    public User getUserByEmail(String email) {
