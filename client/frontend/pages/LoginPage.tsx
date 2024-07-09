@@ -17,8 +17,7 @@ const LoginPage: React.FC = () => {
         params.append('username', username);
         params.append('password', password);
         params.append('grant_type', 'password');
-        params.append('client_id', 'your-client-id');
-        params.append('client_secret', 'your-client-secret'); // include this if required
+        params.append('client_id', 'zettalove-rest-api-auth');
 
         try {
             const response = await axios.post('http://localhost:8080/realms/ZettaKeycloak/protocol/openid-connect/token', params, {
