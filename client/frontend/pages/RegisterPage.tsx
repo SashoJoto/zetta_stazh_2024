@@ -1,3 +1,4 @@
+/*
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
@@ -55,7 +56,7 @@ const RegisterPage: React.FC = () => {
                         <label htmlFor="password">Password</label>
                         <input className="input-register" type="password" id="password" name="password" required />
                     </div>
-                    {/*<div className="input-group">
+                    {/!*<div className="input-group">
                         <label htmlFor="dob">Date of Birth</label>
                         <DatePicker
                             selected={dob}
@@ -80,7 +81,7 @@ const RegisterPage: React.FC = () => {
                     </div>
                     <div className="input-group">
                         <label htmlFor="images">Images</label>
-                        <input className="input-register" type="file" id="images" name="images" multiple accept="image/*" />
+                        <input className="input-register" type="file" id="images" name="images" multiple accept="image/!*" />
                     </div>
                     <div className="input-group">
                         <label htmlFor="bio">Bio</label>
@@ -91,7 +92,7 @@ const RegisterPage: React.FC = () => {
                             placeholder="Tell us about yourself..."
                             required
                         ></textarea>
-                    </div>*/}
+                    </div>*!/}
                     <button className="button-register" type="submit">Register</button>
                     {error && <p className="error-message">{error}</p>}
                 </form>
@@ -101,6 +102,93 @@ const RegisterPage: React.FC = () => {
             </div>
         </div>
     );
+};
+
+export default RegisterPage;
+*/
+import React, { useState } from 'react';
+import StepOne from '../components/StepOne';
+import StepTwo from '../components/StepTwo';
+import StepThree from '../components/StepThree';
+import '../src/RegisterPage.css'
+
+interface FormData {
+    firstName: string;
+    lastName: string;
+    username: string;
+    password: string;
+    dob: Date | null;
+    sex: string;
+    interests: string[];
+    images: File[];
+    bio: string;
+}
+
+const RegisterPage: React.FC = () => {
+    const [step, setStep] = useState(1);
+    const [formData, setFormData] = useState<FormData>({
+        firstName: '',
+        lastName: '',
+        username: '',
+        password: '',
+        dob: null,
+        sex: '',
+        interests: [],
+        images: [],
+        bio: '',
+    });
+
+    const nextStep = () => setStep(step + 1);
+    const prevStep = () => setStep(step - 1);
+
+    const handleChange = (input: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+        setFormData({ ...formData, [input]: e.target.value });
+    };
+
+    const handleDateChange = (date: Date) => {
+        setFormData({ ...formData, dob: date });
+    };
+
+    const handleInterestsChange = (selectedInterests: string[]) => {
+        setFormData({ ...formData, interests: selectedInterests });
+    };
+
+    const handleImageUpload = (uploadedImages: File[]) => {
+        setFormData({ ...formData, images: uploadedImages });
+    };
+
+    switch (step) {
+        case 1:
+            return (
+                <StepOne
+                    nextStep={nextStep}
+                    handleChange={handleChange}
+                    values={formData}
+                />
+            );
+        case 2:
+            return (
+                <StepTwo
+                    nextStep={nextStep}
+                    prevStep={prevStep}
+                    handleDateChange={handleDateChange}
+                    handleChange={handleChange}
+                    handleInterestsChange={handleInterestsChange}
+                    values={formData}
+                />
+            );
+        case 3:
+            return (
+                <StepThree
+                    prevStep={prevStep}
+                    handleChange={handleChange}
+                    handleImageUpload={handleImageUpload}
+                    values={formData}
+                />
+            );
+        default:
+            return null;
+    }
 };
 
 export default RegisterPage;

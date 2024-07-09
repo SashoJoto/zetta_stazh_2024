@@ -1,55 +1,77 @@
-import React from 'react';
-import { Link, Navigate } from 'react-router-dom';
-import '../src/LoginPage.css'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import '../src/LoginPage.css';
 
-// const LoginPage: React.FC = () => {
-//     return (
-//         <div className="login-container">
-//             <p>Login</p>
-//             <h2>Login or Register</h2>
-//             <form className="login-form">
-//                 <input
-//                     type="email"
-//                     placeholder="Email"
-//                     value=""
-//                     // onChange={(e) => setEmail(e.target.value)}
-//                     required
-//                 />
-//                 <input
-//                     type="password"
-//                     placeholder="Password"
-//                     value=""
-//                     // onChange={(e) => setPassword(e.target.value)}
-//                     required
-//                 />
-//                 <button type="submit">Login</button>
-//                 {/*{error && <p className="error-message">{error}</p>}*/}
-//             </form>
-//             <p className="register-link">
-//                 New user? <Link to="/register">Register here</Link>
-//             </p>
-//         </div>
-//     );
-// };
-//
-// export default LoginPage;
-const LoginPage:React.FC = () => {
+const LoginPage: React.FC = () => {
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
+    const navigate = useNavigate();
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setError('');
+
+        try {
+            const response = await axios.post('http://localhost:8080/realms/ZettaKeycloak/protocol/openid-connect/token', {
+                username,
+                password,
+                grant_type: 'password',
+                client_id: 'your-client-id',
+                client_secret: 'your-client-secret'
+            }, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+
+            // Handle the response, e.g., save the token and user information
+            const { access_token } = response.data;
+            // Save the token (e.g., in localStorage or context)
+            // localStorage.setItem('token', access_token);
+
+            // Navigate to the main page after successful login
+            navigate('/');
+        } catch (err) {
+            // Handle error
+            setError('Login failed. Please check your credentials and try again.');
+        }
+    };
+
     return (
         <div className="container">
             <div className="login-container">
                 <h1>Login</h1>
-                <form id="loginForm">
+                <form id="loginForm" onSubmit={handleSubmit}>
                     <div className="input-group">
                         <label htmlFor="username">Username</label>
-                        <input className="input-login" type="text" id="username" name="username" required/>
+                        <input
+                            className="input-login"
+                            type="text"
+                            id="username"
+                            name="username"
+                            value={username}
+                            onChange={(e) => setUsername(e.target.value)}
+                            required
+                        />
                     </div>
                     <div className="input-group">
                         <label htmlFor="password">Password</label>
-                        <input className="input-login" type="password" id="password" name="password" required/>
+                        <input
+                            className="input-login"
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
                     </div>
                     <button className="button-login" type="submit">Login</button>
                 </form>
-                <p style={{fontSize:'12px', marginTop:'10px', textAlign:'left'}}>
+                {error && <p className="error-message">{error}</p>}
+                <p style={{ fontSize: '12px', marginTop: '10px', textAlign: 'left' }}>
                     New user?
                     <Link to="/register" id="link-to-register">Register here</Link>
                 </p>
