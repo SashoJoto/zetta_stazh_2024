@@ -13,7 +13,7 @@
 aside{
     width:260px;
     height:800px;
-    background-color:pink;
+    background-color:lightpink;
     display:inline-block;
     font-size:15px;
     vertical-align:top;
@@ -56,7 +56,7 @@ aside li{
     padding:10px 0;
 }
 aside li:hover{
-    background-color:pink;
+    background-color:lightpink;
 }
 
 h2,h3{
@@ -95,7 +95,7 @@ aside li h3{
     background-color:#58b666;
 }
 .orange{
-    background-color:#ff725d;
+    background-color:red;
 }
 .white{
     background-color:white;
@@ -168,7 +168,7 @@ main header h3{
     text-align:right;
 }
 #chat .you .message{
-    background-color:pink;
+    background-color:lightpink;
 }
 #chat .me .message{
     background-color:white;
@@ -180,7 +180,7 @@ main header h3{
     border-width: 0 10px 10px 10px;
 }
 #chat .you .triangle{
-    border-color: transparent transparent pink transparent;
+    border-color: transparent transparent lightpink transparent;
     margin-left:15px;
 }
 #chat .me .triangle{
@@ -214,7 +214,7 @@ main footer a{
     text-decoration:none;
     text-transform:uppercase;
     font-weight:bold;
-    color: pink;
+    color: lightpink;
     vertical-align:top;
     margin-left:333px;
     margin-top:5px;
