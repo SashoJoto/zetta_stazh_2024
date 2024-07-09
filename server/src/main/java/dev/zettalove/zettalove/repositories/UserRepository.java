@@ -1,8 +1,13 @@
 package dev.zettalove.zettalove.repositories;
 
-import dev.zettalove.zettalove.entities.user.User;
+import dev.zettalove.zettalove.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    User findByEmail(String email);
+import java.util.Optional;
+import java.util.UUID;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, UUID> {
+    Optional<User> findById(UUID id);
 }

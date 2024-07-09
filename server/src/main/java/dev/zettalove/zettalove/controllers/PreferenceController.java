@@ -1,9 +1,8 @@
 package dev.zettalove.zettalove.controllers;
 
-import dev.zettalove.zettalove.entities.preference.Preference;
+import dev.zettalove.zettalove.entities.Interest;
 import dev.zettalove.zettalove.services.PreferenceService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,18 +15,18 @@ public class PreferenceController {
     private final PreferenceService preferenceService;
 
     @GetMapping
-    public List<Preference> getAllPreferences() {
+    public List<Interest> getAllPreferences() {
         return preferenceService.getAllPreferences();
     }
 
     @GetMapping("/{id}")
-    public Optional<Preference> getPreferenceById(@PathVariable Long id) {
+    public Optional<Interest> getPreferenceById(@PathVariable Long id) {
         return preferenceService.getPreferenceById(id);
     }
 
     @PostMapping
-    public Preference createPreference(@RequestBody Preference preference) {
-        return preferenceService.savePreference(preference);
+    public Interest createPreference(@RequestBody Interest interest) {
+        return preferenceService.savePreference(interest);
     }
 
     @DeleteMapping("/{id}")
