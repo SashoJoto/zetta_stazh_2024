@@ -18,6 +18,7 @@ import dev.zettalove.zettalove.exceptions.accountsetup.InterestNotFoundException
 import dev.zettalove.zettalove.exceptions.accountsetup.InterestSetupDoneException;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailFormatException;
 import dev.zettalove.zettalove.exceptions.registerexceptions.EmailTakenException;
+import dev.zettalove.zettalove.exceptions.userexceptions.UserAlreadyLikedException;
 import dev.zettalove.zettalove.exceptions.userexceptions.UserNotFoundException;
 import dev.zettalove.zettalove.exceptions.userimageexceptions.UserImageCouldNotBeRemovedException;
 import dev.zettalove.zettalove.exceptions.userimageexceptions.UserImageNotFoundException;
@@ -216,21 +217,7 @@ public class UserService {
         }
     }
 
-    public User saveUser(User user) {
-        User savedUser = userRepository.save(user);
-        addUserToChatSystem(savedUser);
-        return savedUser;
-    }
 
-    private void addUserToChatSystem(User user) {
-        String nickname = user.getId().toString();
-        String fullName = user.getId().toString();//user.getFirstName() + " " + user.getLastName();
-        ChatUser chatUser = new ChatUser(nickname, fullName);
-        webSocketClientService.addUserToChatSystem(chatUser);
-    }
-    
-    //TODO DELETE USER
-    
 
     public UUID getSubjectIdFromAuthentication(Authentication authentication) {
         Object principal = authentication.getPrincipal();
@@ -242,7 +229,6 @@ public class UserService {
         throw new IllegalStateException("Expected JWT authentication");
     }
 
-
     private UserRepresentation toUserRepresentation(RegisterUserRequest registerRequest) {
         UserRepresentation userRepresentation = new UserRepresentation();
         userRepresentation.setEmail(registerRequest.getEmail());
@@ -252,29 +238,104 @@ public class UserService {
         return userRepresentation;
     }
 
+    //TODO REMOVE FROM REDIS
 
+    public void swipeUser(UUID swipedUserId, Authentication authentication) {
+        User user = userRepository.findById(getSubjectIdFromAuthentication(authentication)).orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+        User swipedUser = userRepository.findById(swipedUserId).orElseThrow(() -> new UserNotFoundException(swipedUserId));
+        user.getSwiped().add(swipedUser);
+        user.getRecommended().remove(swipedUser);
+        userRepository.save(user);
 
-    public void likeUser(UUID userId, UUID likedUserId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        User likedUser = userRepository.findById(likedUserId).orElseThrow(() -> new RuntimeException("Liked user not found"));
+        removeSwipedUserFromRedis(authentication, swipedUserId);
+    }
+
+    public void likeUser(UUID likedUserId, Authentication authentication) {
+        User user = userRepository.findById(getSubjectIdFromAuthentication(authentication))
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+
+        User likedUser = userRepository.findById(likedUserId).orElseThrow(() -> new UserNotFoundException(likedUserId));
+
+        if (user.getLikedUsers().contains(likedUser)) {
+            throw new UserAlreadyLikedException(likedUserId);
+        }
 
         user.getLikedUsers().add(likedUser);
+        user.getSwiped().add(likedUser);
         userRepository.save(user);
 
         if (likedUser.getLikedUsers().contains(user)) {
             likedUser.getMatchedUsers().add(user);
+            userRepository.save(likedUser);
+
             user.getMatchedUsers().add(likedUser);
+            user.getRecommended().remove(likedUser);
+            userRepository.save(user);
+
+            removeSwipedUserFromRedis(authentication, likedUserId);
+
             notifyUsersForMatch(user, likedUser);
         }
     }
 
-    public void swipeUser(UUID userId, UUID swipedUserId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        User swipedUser = userRepository.findById(swipedUserId).orElseThrow(() -> new RuntimeException("Swiped user not found"));
-        user.getSwiped().add(swipedUser);
-        user.getRecommended().remove(swipedUser);
-        userRepository.save(user);
+    public Set<User> getRecommendedUsers(Authentication authentication) {
+        UUID userId = getSubjectIdFromAuthentication(authentication);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+        Set<User> recommendedUsers = user.getRecommended();
+
+        // Check Redis for cached recommendations
+        String recommendedUserIds = redisTemplate.opsForValue().get(String.valueOf(userId));
+        if (recommendedUserIds != null && !recommendedUserIds.isEmpty()) {
+            List<UUID> recommendedUserIdsList = Arrays.stream(recommendedUserIds.split(","))
+                    .map(UUID::fromString)
+                    .collect(Collectors.toList());
+            recommendedUsers = userRepository.findAllById(recommendedUserIdsList).stream()
+                    .filter(recommendedUser -> !user.getSwiped().contains(recommendedUser))
+                    .collect(Collectors.toSet());
+        } else if (recommendedUsers.isEmpty()) {
+            // If no cached recommendations, trigger recommendations and get from the database
+            recommendationService.triggerRecommendations(userId);
+            recommendedUsers = user.getRecommended();
+        }
+
+        return recommendedUsers;
     }
+
+    public void removeSwipedUserFromRedis(Authentication authentication, UUID swipedUserId) {
+        UUID userId = getSubjectIdFromAuthentication(authentication);
+
+        String recommendedUserIds = redisTemplate.opsForValue().get(String.valueOf(userId));
+
+        if (recommendedUserIds != null && !recommendedUserIds.isEmpty()) {
+            List<String> swipedUserIdsList = new ArrayList<>(Arrays.asList(recommendedUserIds.split(",")));
+            swipedUserIdsList.remove(swipedUserId.toString());
+            if (swipedUserIdsList.isEmpty()) {
+                redisTemplate.delete(userId.toString());
+            } else {
+                String updatedSwipedUserIdsString = String.join(",", swipedUserIdsList);
+                redisTemplate.opsForValue().set(userId.toString(), updatedSwipedUserIdsString);
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+    private void addUserToChatSystem(User user) {
+        String nickname = user.getId().toString();
+        String fullName = user.getId().toString();//user.getFirstName() + " " + user.getLastName();
+        ChatUser chatUser = new ChatUser(nickname, fullName);
+        webSocketClientService.addUserToChatSystem(chatUser);
+    }
+
+    //TODO DELETE USER
+
 
      public void notifyUsersForMatch(User user, User likedUser) {
         // Fetch user ids from chat service
@@ -309,29 +370,6 @@ public class UserService {
         // Post the chat message to the chat service to process and notify users
         webSocketClientService.sendMessage(chatMessage);
         webSocketClientService.sendMessage(chatMessage2);
-    }
-
-    public Set<User> getRecommendedUsers(UUID userId) {
-        User user = userRepository.findById(userId)
-            .orElseThrow(() -> new RuntimeException("User not found"));
-        Set<User> recommendedUsers = user.getRecommended();
-
-        // Check Redis for cached recommendations
-        String recommendedUserIds = redisTemplate.opsForValue().get(String.valueOf(userId));
-        if (recommendedUserIds != null && !recommendedUserIds.isEmpty()) {
-            List<UUID> recommendedUserIdsList = Arrays.stream(recommendedUserIds.split(","))
-                    .map(UUID::fromString)
-                    .collect(Collectors.toList());
-            recommendedUsers = userRepository.findAllById(recommendedUserIdsList).stream()
-                    .filter(recommendedUser -> !user.getSwiped().contains(recommendedUser))
-                    .collect(Collectors.toSet());
-        } else if (recommendedUsers.isEmpty()) {
-            // If no cached recommendations, trigger recommendations and get from the database
-            recommendationService.triggerRecommendations(userId);
-            recommendedUsers = user.getRecommended();
-        }
-
-        return recommendedUsers;
     }
 
 
