@@ -4,7 +4,7 @@ import StepTwo from '../components/StepTwo';
 import StepThree from '../components/StepThree';
 import axios from 'axios';
 import '../src/RegisterPage.css';
-import {server_url} from "../constants/server_contants.ts";
+import {keycloak_url, server_url} from "../constants/server_contants.ts";
 
 interface FormData {
     first_name: string;
@@ -77,6 +77,22 @@ const RegisterPage: React.FC = () => {
                 email: formData.email,
                 password: formData.password,
             });
+
+            const params = new URLSearchParams();
+            params.append('username', formData.email);
+            params.append('password', formData.password);
+            params.append('grant_type', 'password');
+            params.append('client_id', 'zettalove-rest-api-auth');
+
+            const response = await axios.post(keycloak_url, params, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+
+            if (response.data && response.data.token) {
+                localStorage.setItem('token', response.data.token);
+            }
         } catch (error) {
             console.error('Error during first step registration:', error);
         }
