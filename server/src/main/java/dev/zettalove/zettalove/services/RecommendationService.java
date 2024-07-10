@@ -2,6 +2,8 @@ package dev.zettalove.zettalove.services;
 
 import dev.zettalove.zettalove.entities.Interest;
 import dev.zettalove.zettalove.entities.User;
+import dev.zettalove.zettalove.enums.Gender;
+import dev.zettalove.zettalove.enums.GenderPreference;
 import dev.zettalove.zettalove.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -28,12 +30,14 @@ public class RecommendationService {
         Set<Interest> userPreferences = user.getInterests();
         LocalDate userMinDateOfBirth = calculateDateOfBirth(user.getDesiredMinAge());
         LocalDate userMaxDateOfBirth = calculateDateOfBirth(user.getDesiredMaxAge());
+        GenderPreference userGenderPreference = user.getDesiredGender();
 
         List<User> recommendedUsers = allUsers.stream()
                 .filter(other -> !user.equals(other))
                 .filter(other -> !swipedUsers.contains(other))
                 .filter(other -> isAgeCompatible(other.getDateOfBirth(), userMinDateOfBirth, userMaxDateOfBirth))
                 .filter(other -> hasMatchingPreferences(userPreferences, other.getInterests()))
+                .filter(other -> isGenderCompatible(other.getGender(), userGenderPreference))
                 .collect(Collectors.toList());
 
         user.getRecommended().clear();
@@ -44,6 +48,12 @@ public class RecommendationService {
                 .collect(Collectors.joining(","));
         redisTemplate.opsForValue().set(user.getId().toString(), recommendedUserIds);
         userRepository.save(user);
+    }
+
+    private boolean isGenderCompatible(Gender otherGender, GenderPreference userGenderPreference) {
+        return userGenderPreference == GenderPreference.BOTH ||
+                (userGenderPreference == GenderPreference.MALE && otherGender == Gender.MALE) ||
+                (userGenderPreference == GenderPreference.FEMALE && otherGender == Gender.FEMALE);
     }
 
     private boolean hasMatchingPreferences(Set<Interest> userPreferences, Set<Interest> otherPreferences) {
