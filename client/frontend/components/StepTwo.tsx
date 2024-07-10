@@ -4,6 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import {server_url} from "../constants/server_contants.ts";
 
 interface StepTwoProps {
     nextStep: () => void;
@@ -43,7 +44,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
             }
 
             try {
-                const response = await axios.get('http://localhost:8081/api/v1/interests', {
+                const response = await axios.get(server_url + "/interests", {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },

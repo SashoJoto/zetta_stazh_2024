@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../contexts/AuthContext';
 import '../src/LoginPage.css';
+import {keycloak_url} from "../constants/server_contants.ts";
 
 const LoginPage: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -22,7 +23,7 @@ const LoginPage: React.FC = () => {
         params.append('client_id', 'zettalove-rest-api-auth');
 
         try {
-            const response = await axios.post('http://localhost:8080/realms/ZettaKeycloak/protocol/openid-connect/token', params, {
+            const response = await axios.post(keycloak_url, params, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }

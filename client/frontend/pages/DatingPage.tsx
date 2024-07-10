@@ -33,7 +33,6 @@ const DatingPage: React.FC = () => {
                         <div className="date-pic-bio">
                             <div className="date-pic-icon" style={{fontSize:'20px'}}>
                                 <div className="tashak">
-                                    <img src="../src/assets/location.png" alt="location"/>
                                     <h2>Location</h2>
                                 </div>
                                 <div className="tashak-tekst">
@@ -42,7 +41,6 @@ const DatingPage: React.FC = () => {
                             </div>
                             <div className="date-pic-icon" style={{fontSize:'20px'}}>
                                 <div className="tashak">
-                                    <img src="../src/assets/hobbies.png" alt="interests"/>
                                     <h2>Interests</h2>
                                 </div>
                                 <div className="tashak-tekst">
@@ -51,7 +49,6 @@ const DatingPage: React.FC = () => {
                             </div>
                             <div className="date-pic-icon" style={{fontSize:'20px'}}>
                                 <div className="tashak">
-                                    <img style={{marginRight:'10px'}} src="../src/assets/profile.png" alt="profile"/>
                                     <h2>Bio</h2>
                                 </div>
                                 <div className="tashak-tekst">

@@ -4,6 +4,7 @@ import StepTwo from '../components/StepTwo';
 import StepThree from '../components/StepThree';
 import axios from 'axios';
 import '../src/RegisterPage.css';
+import {server_url} from "../constants/server_contants.ts";
 
 interface FormData {
     first_name: string;
@@ -70,7 +71,7 @@ const RegisterPage: React.FC = () => {
 
     const handleFirstStepSubmit = async () => {
         try {
-            await axios.post('http://localhost:8081/api/v1/users/register', {
+            await axios.post(server_url + "/users/register", {
                 first_name: formData.first_name,
                 last_name: formData.last_name,
                 email: formData.email,
@@ -83,7 +84,7 @@ const RegisterPage: React.FC = () => {
 
     const handleSecondStepSubmit = async () => {
         try {
-            await axios.post('http://localhost:8081/api/v1/users/interests-setup', {
+            await axios.post(server_url + "/users/interests-setup", {
                 dateOfBirth: formData.dateOfBirth,
                 description: formData.description,
                 address: formData.address,
@@ -106,7 +107,7 @@ const RegisterPage: React.FC = () => {
         });*/
 
         try {
-            await axios.post('http://localhost:8081/api/v1/users/images-setup', formDataToSend, {
+            await axios.post(server_url + "/users/images-setup", formDataToSend, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
