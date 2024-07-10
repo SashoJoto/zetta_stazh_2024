@@ -8,9 +8,9 @@ import 'slick-carousel/slick/slick-theme.css';
 import '../src/DatingPage.css';
 
 const cardsData = [
-    { id: 1, image: datePic, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing' ,bio: 'скъпа изглеждаш добре, ма не по+добре от хартията! за хартия бати лакомията. таа твойта бати мръсотията! ki + kilian по шията top тупалка, бати возията горчи, ама е бати вкусутията глей как блести, ебати газарията!' },
-    { id: 2, image: datePic1, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing'  ,bio: 'Bio for Toni Kalashnika' },
-    { id: 3, image: datePic2, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing' ,bio: 'Bio for Toni Kalashnika' },
+    { id: 1, image: datePic, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing' ,description: 'скъпа изглеждаш добре, ма не по+добре от хартията! за хартия бати лакомията. таа твойта бати мръсотията! ki + kilian по шията top тупалка, бати возията горчи, ама е бати вкусутията глей как блести, ебати газарията!' },
+    { id: 2, image: datePic1, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing'  ,description: 'Bio for Toni Kalashnika' },
+    { id: 3, image: datePic2, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing' ,description: 'Bio for Toni Kalashnika' },
 ];
 
 const DatingPage: React.FC = () => {
@@ -55,7 +55,7 @@ const DatingPage: React.FC = () => {
                                     <h2>Bio</h2>
                                 </div>
                                 <div className="tashak-tekst">
-                                    {card.bio}
+                                    {card.description}
                                 </div>
                             </div>
                         </div>

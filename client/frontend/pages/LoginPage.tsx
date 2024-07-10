@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext';
 import '../src/LoginPage.css';
 
 const LoginPage: React.FC = () => {
@@ -8,6 +9,7 @@ const LoginPage: React.FC = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { login } = useAuth();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -28,8 +30,8 @@ const LoginPage: React.FC = () => {
 
             const { access_token } = response.data;
 
-            // Save the token (e.g., in localStorage or context)
-            localStorage.setItem('token', access_token);
+            // Save the token and user information
+            login({ username }, access_token);
 
             // Navigate to the main page after successful login
             navigate('/');

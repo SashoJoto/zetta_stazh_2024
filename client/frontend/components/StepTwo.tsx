@@ -1,21 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import {Link} from "react-router-dom";
+import axios from 'axios';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 interface StepTwoProps {
     nextStep: () => void;
     prevStep: () => void;
     handleDateChange: (date: Date) => void;
-    handleChange: (input: string) => (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => void;
+    handleChange: (input: string) => (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
     handleInterestsChange: (selectedInterests: string[]) => void;
     values: {
-        dob: Date | null;
-        sex: string;
+        dateOfBirth: Date | null;
+        description: string;
+        address: string;
+        phoneNumber: string;
+        desiredMinAge: number;
+        desiredMaxAge: number;
+        gender: string;
+        desiredGender: string;
         interests: string[];
     };
 }
-
 
 const StepTwo: React.FC<StepTwoProps> = ({
                                              nextStep,
@@ -25,6 +32,31 @@ const StepTwo: React.FC<StepTwoProps> = ({
                                              handleInterestsChange,
                                              values,
                                          }) => {
+    const [availableInterests, setAvailableInterests] = useState<string[]>([]);
+    const { token } = useAuth();
+
+    useEffect(() => {
+        const fetchInterests = async () => {
+            if (!token) {
+                console.error('No auth token found');
+                return;
+            }
+
+            try {
+                const response = await axios.get('http://localhost:8081/api/v1/interests', {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                setAvailableInterests(response.data);
+            } catch (error) {
+                console.error('Error fetching interests:', error);
+            }
+        };
+
+        fetchInterests();
+    }, [token]);
+
     const continueToNext = (e: React.FormEvent) => {
         e.preventDefault();
         nextStep();
@@ -42,11 +74,84 @@ const StepTwo: React.FC<StepTwoProps> = ({
                     <h1>Step 2: Personal Details</h1>
                     <div className="input-group">
                         <label>Date of Birth:</label>
-                        <DatePicker className="input-register" selected={values.dob} onChange={handleDateChange} required />
+                        <DatePicker
+                            className="input-register"
+                            selected={values.dateOfBirth}
+                            onChange={handleDateChange}
+                            dateFormat="yyyy/MM/dd"
+                            required
+                        />
                     </div>
-                    <div className="input-group" style={{marginBottom:'0'}}>
-                        <label>Sex:</label>
-                        <select  className="input-group" onChange={handleChange('sex')} value={values.sex} required>
+                    <div className="input-group">
+                        <label>Description:</label>
+                        <textarea
+                            className="input-register"
+                            onChange={handleChange('description')}
+                            value={values.description}
+                            required
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>Address:</label>
+                        <input
+                            className="input-register"
+                            type="text"
+                            onChange={handleChange('address')}
+                            value={values.address}
+                            required
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>Phone Number:</label>
+                        <input
+                            className="input-register"
+                            type="text"
+                            onChange={handleChange('phoneNumber')}
+                            value={values.phoneNumber}
+                            required
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>Desired Minimum Age:</label>
+                        <input
+                            className="input-register"
+                            type="number"
+                            onChange={handleChange('desiredMinAge')}
+                            value={values.desiredMinAge}
+                            required
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>Desired Maximum Age:</label>
+                        <input
+                            className="input-register"
+                            type="number"
+                            onChange={handleChange('desiredMaxAge')}
+                            value={values.desiredMaxAge}
+                            required
+                        />
+                    </div>
+                    <div className="input-group">
+                        <label>Gender:</label>
+                        <select
+                            className="input-register"
+                            onChange={handleChange('gender')}
+                            value={values.gender}
+                            required
+                        >
+                            <option value="">Select</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div className="input-group">
+                        <label>Desired Gender:</label>
+                        <select
+                            className="input-register"
+                            onChange={handleChange('desiredGender')}
+                            value={values.desiredGender}
+                            required
+                        >
                             <option value="">Select</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -61,24 +166,11 @@ const StepTwo: React.FC<StepTwoProps> = ({
                             value={values.interests}
                             required
                         >
-                            <option value="music">Music</option>
-                            <option value="sports">Sports</option>
-                            <option value="reading">Reading</option>
-                            <option value="reading1">Reading</option>
-                            <option value="reading2">Reading</option>
-                            <option value="reading3">Reading</option>
-                            <option value="reading4">Reading</option>
-                            <option value="reading5">Reading</option>
-                            <option value="reading6">Reading</option>
-                            <option value="reading7">Reading</option>
-                            <option value="reading8">Reading</option>
-
+                            {availableInterests.map((interest, index) => (
+                                <option key={index} value={interest}>{interest}</option>
+                            ))}
                         </select>
-                    </div>{/*
-                    <div className="buttons-back-next">
-                        <button className="button-register" type="button" onClick={prevStep} style={{marginRight:'80px'}}>Back</button>
-                        <button className="button-register" type="submit">Next</button>
-                    </div>*/}
+                    </div>
                     <button className="button-register" type="submit">Next</button>
                     <p style={{ fontSize: '12px', marginTop: '10px', textAlign: 'left' }}>
                         Already have an account? <Link to="/login" id="link-to-login">Login here</Link>

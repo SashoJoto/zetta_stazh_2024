@@ -19,8 +19,10 @@ const App: React.FC = () => {
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/" element={user ? <DatingPage /> : <Navigate to="/login" />} />
-                <Route path="/messages" element={<PrivateRoute><MessagesPage /></PrivateRoute>} />
-                <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
+                <Route path="/" element={<PrivateRoute />}>
+                    <Route path="messages" element={<MessagesPage />} />
+                    <Route path="profile" element={<ProfilePage />} />
+                </Route>
             </Routes>
         </div>
     );

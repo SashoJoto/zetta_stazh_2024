@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import '../src/ProfilePage.css';
 
 const ProfilePage: React.FC = () => {
     return (
         <div className="page-content page-container" id="page-content">
-            <div className="padding">
-                <div className="row container d-flex justify-content-center">
+            <div className="padding" style={{margin:'0'}}>
+                <div className="row container d-flex justify-content-center" style={{margin:'0'}}>
                     <div className="col-xl-6 col-md-12">
                         <div className="card user-card-full">
                             <div className="row m-l-0 m-r-0">
@@ -15,9 +15,8 @@ const ProfilePage: React.FC = () => {
                                             <img src="https://img.icons8.com/bubbles/100/000000/user.png"
                                                  className="img-radius" alt="User-Profile-Image"/>
                                         </div>
-                                        <h6 className="f-w-600" style={{color:'black'}}>Toni kalashnika</h6>
-                                        <p style={{color:'black'}}>Interests:</p>
-                                        <p style={{color:'black', fontSize:'10px'}}>Reading, Wanking, Boxing</p>
+                                        <h6 className="f-w-600" style={{color: 'black'}}>Toni Kalashnika</h6>
+                                        <p style={{color: 'black', fontSize: '10px'}}>tonikalashnika@gmail.com</p>
                                         <i className=" mdi mdi-square-edit-outline feather icon-edit m-t-10 f-16"></i>
                                     </div>
                                 </div>
@@ -31,34 +30,23 @@ const ProfilePage: React.FC = () => {
                                             </div>
                                             <div className="col-sm-6">
                                                 <p className="m-b-10 f-w-600">Date of Birth</p>
-                                                <h6 className="text-muted f-w-400">07/10/1998</h6>
-                                            </div>
-                                        </div>
-                                        <h6 className="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Projects</h6>
-                                        <div className="row">
-                                            <div className="col-sm-6">
-                                                <p className="m-b-10 f-w-600">Recent</p>
-                                                <h6 className="text-muted f-w-400">Sam Disuja</h6>
+                                                <h6 className="text-muted f-w-400">1998/05/12</h6>
                                             </div>
                                             <div className="col-sm-6">
-                                                <p className="m-b-10 f-w-600">Most Viewed</p>
-                                                <h6 className="text-muted f-w-400">Dinoter husainm</h6>
+                                                <p className="m-b-10 f-w-600">Address</p>
+                                                <h6 className="text-muted f-w-400">Filipovtsi</h6>
+                                            </div>
+                                            <div className="col-sm-6">
+                                                <p className="m-b-10 f-w-600">Looking to date</p>
+                                                <h6 className="text-muted f-w-400">Female</h6>
                                             </div>
                                         </div>
-                                        <ul className="social-link list-unstyled m-t-40 m-b-10">
-                                            <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title=""
-                                                   data-original-title="facebook" data-abc="true"><i
-                                                className="mdi mdi-facebook feather icon-facebook facebook"
-                                                aria-hidden="true"></i></a></li>
-                                            <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title=""
-                                                   data-original-title="twitter" data-abc="true"><i
-                                                className="mdi mdi-twitter feather icon-twitter twitter"
-                                                aria-hidden="true"></i></a></li>
-                                            <li><a href="#!" data-toggle="tooltip" data-placement="bottom" title=""
-                                                   data-original-title="instagram" data-abc="true"><i
-                                                className="mdi mdi-instagram feather icon-instagram instagram"
-                                                aria-hidden="true"></i></a></li>
-                                        </ul>
+                                        <h6 className="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Interests</h6>
+                                        <p className="text-muted" style={{color: 'black', fontSize: '15px'}}>Reading,
+                                            Wanking, Boxing</p>
+                                        <h6 className="m-b-20 m-t-40 p-b-5 b-b-default f-w-600">Bio</h6>
+                                        <h6 className="text-muted f-w-400">скъпа изглеждаш добре, ма не по+добре от хартията! за хартия бати лакомията. таа твойта бати мръсотията! ki + kilian по шията top тупалка, бати возията горчи, ама е бати вкусутията глей как блести, ебати газарията!</h6>
+
                                     </div>
                                 </div>
                             </div>
