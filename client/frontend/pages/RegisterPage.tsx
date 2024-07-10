@@ -73,7 +73,7 @@ const RegisterPage: React.FC = () => {
             await axios.post('http://localhost:8081/api/v1/users/register', {
                 first_name: formData.first_name,
                 last_name: formData.last_name,
-                username: formData.email,
+                email: formData.email,
                 password: formData.password,
             });
         } catch (error) {
