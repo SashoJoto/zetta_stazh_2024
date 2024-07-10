@@ -5,7 +5,7 @@ import { useAuth } from '../contexts/AuthContext';
 import '../src/LoginPage.css';
 
 const LoginPage: React.FC = () => {
-    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
@@ -16,7 +16,7 @@ const LoginPage: React.FC = () => {
         setError('');
 
         const params = new URLSearchParams();
-        params.append('username', username);
+        params.append('username', email);
         params.append('password', password);
         params.append('grant_type', 'password');
         params.append('client_id', 'zettalove-rest-api-auth');
@@ -31,7 +31,7 @@ const LoginPage: React.FC = () => {
             const { access_token } = response.data;
 
             // Save the token and user information
-            login({ username }, access_token);
+            login({ email }, access_token);
 
             // Navigate to the main page after successful login
             navigate('/');
@@ -47,14 +47,14 @@ const LoginPage: React.FC = () => {
                 <h1>Login</h1>
                 <form id="loginForm" onSubmit={handleSubmit}>
                     <div className="input-group">
-                        <label htmlFor="username">Username</label>
+                        <label htmlFor="email">Email</label>
                         <input
                             className="input-login"
                             type="text"
-                            id="username"
-                            name="username"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
+                            id="email"
+                            name="email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             required
                         />
                     </div>
