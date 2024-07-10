@@ -17,7 +17,7 @@ const MessagingPage: React.FC = () => {
                     <li>
                         <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
                         <div className="hover-che">
-                            <h2>Prénom Nom</h2>
+                            <h2>Jack Shoparrow</h2>
                             <h3>
                                 <span className="status orange"></span>
                                 offline
@@ -27,7 +27,7 @@ const MessagingPage: React.FC = () => {
                     <li>
                         <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_02.jpg" alt=""/>
                         <div className="hover-che">
-                            <h2>Prénom Nom</h2>
+                            <h2>Ivan Cirakov</h2>
                             <h3>
                                 <span className="status green"></span>
                                 online
@@ -37,7 +37,7 @@ const MessagingPage: React.FC = () => {
                     <li>
                         <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_03.jpg" alt=""/>
                         <div className="hover-che">
-                            <h2>Prénom Nom</h2>
+                            <h2>Niki Naglev</h2>
                             <h3>
                                 <span className="status orange"></span>
                                 offline
@@ -47,7 +47,7 @@ const MessagingPage: React.FC = () => {
                     <li>
                         <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_04.jpg" alt=""/>
                         <div className="hover-che">
-                            <h2>Prénom Nom</h2>
+                            <h2>Viktoriq Secret</h2>
                             <h3>
                                 <span className="status green"></span>
                                 online
@@ -57,7 +57,7 @@ const MessagingPage: React.FC = () => {
                     <li>
                         <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_05.jpg" alt=""/>
                         <div className="hover-che">
-                            <h2>Prénom Nom</h2>
+                            <h2>Sasha Velichkova</h2>
                             <h3>
                                 <span className="status orange"></span>
                                 offline
@@ -84,43 +84,13 @@ const MessagingPage: React.FC = () => {
                             </h3>
                         </div>
                     </li>
-                    <li>
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_08.jpg" alt=""/>
-                        <div className="hover-che">
-                            <h2>Prénom Nom</h2>
-                            <h3>
-                                <span className="status green"></span>
-                                online
-                            </h3>
-                        </div>
-                    </li>
-                    <li>
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_09.jpg" alt=""/>
-                        <div className="hover-che">
-                            <h2>Prénom Nom</h2>
-                            <h3>
-                                <span className="status green"></span>
-                                online
-                            </h3>
-                        </div>
-                    </li>
-                    <li>
-                        <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_10.jpg" alt=""/>
-                        <div className="hover-che">
-                            <h2>Prénom Nom</h2>
-                            <h3>
-                                <span className="status orange"></span>
-                                offline
-                            </h3>
-                        </div>
-                    </li>
                 </ul>
             </aside>
             <main>
                 <header>
                     <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
                     <div>
-                        <h2>Chat with Vincent Porter</h2>
+                        <h2>Chat with Jack Shoparrow</h2>
                         <h3>already 1902 messages</h3>
                     </div>
                     <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt=""/>

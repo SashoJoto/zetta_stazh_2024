@@ -4,7 +4,7 @@ import StepTwo from '../components/StepTwo';
 import StepThree from '../components/StepThree';
 import axios from 'axios';
 import '../src/RegisterPage.css';
-import {keycloak_url, server_url} from "../constants/server_contants.ts";
+import { keycloak_url, server_url } from "../constants/server_contants.ts";
 
 interface FormData {
     first_name: string;
@@ -125,14 +125,27 @@ const RegisterPage: React.FC = () => {
 
     const handleFinalSubmit = async () => {
         const formDataToSend = new FormData();
-        /*formData.images.forEach((image) => {
-            formDataToSend.append('images', image);
-        });*/
+
+        const fileToBase64 = (file: File) => {
+            return new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result as string);
+                reader.onerror = (error) => reject(error);
+            });
+        };
 
         try {
-            await axios.post(server_url + "/users/images-setup", formDataToSend, {
+            const base64Images = await Promise.all(formData.images.map(fileToBase64));
+
+            const token = localStorage.getItem('token'); // Retrieve the token from local storage
+
+            await axios.post(server_url + "/users/images-setup", {
+                images: base64Images
+            }, {
                 headers: {
-                    'Content-Type': 'multipart/form-data',
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}` // Include the token in the Authorization header
                 },
             });
         } catch (error) {
