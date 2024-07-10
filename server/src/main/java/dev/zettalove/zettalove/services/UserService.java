@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.zettalove.zettalove.chat.entities.ChatMessage;
 import dev.zettalove.zettalove.chat.entities.ChatUser;
 import dev.zettalove.zettalove.dto.UserDto;
+import dev.zettalove.zettalove.dto.UserImageDto;
 import dev.zettalove.zettalove.entities.Interest;
 import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.entities.UserImage;
@@ -197,6 +198,12 @@ public class UserService {
         return user.map(UserDto::new).orElseThrow(() -> new UserNotFoundException(id));
     }
 
+    public List<UserImageDto> getUserImages(Authentication authentication) {
+        UUID userId = getSubjectIdFromAuthentication(authentication);
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return user.getImages().stream().map(UserImageDto::new).collect(Collectors.toList());
+    }
+
     @Transactional
     public void removeUserImage(Long imageId, Authentication authentication) {
         UUID userId = getSubjectIdFromAuthentication(authentication);
@@ -217,29 +224,7 @@ public class UserService {
         }
     }
 
-
-
-    public UUID getSubjectIdFromAuthentication(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof Jwt) {
-            Jwt jwt = (Jwt) principal;
-            String subject = jwt.getSubject(); // This is the 'sub' claim from the JWT token
-            return UUID.fromString(subject);
-        }
-        throw new IllegalStateException("Expected JWT authentication");
-    }
-
-    private UserRepresentation toUserRepresentation(RegisterUserRequest registerRequest) {
-        UserRepresentation userRepresentation = new UserRepresentation();
-        userRepresentation.setEmail(registerRequest.getEmail());
-        userRepresentation.setFirstName(registerRequest.getFirstName());
-        userRepresentation.setLastName(registerRequest.getLastName());
-        userRepresentation.setEnabled(true);
-        return userRepresentation;
-    }
-
-    //TODO REMOVE FROM REDIS
-
+    @Transactional
     public void swipeUser(UUID swipedUserId, Authentication authentication) {
         User user = userRepository.findById(getSubjectIdFromAuthentication(authentication)).orElseThrow(() -> new RuntimeException("Authenticated user not found"));
         User swipedUser = userRepository.findById(swipedUserId).orElseThrow(() -> new UserNotFoundException(swipedUserId));
@@ -250,6 +235,7 @@ public class UserService {
         removeSwipedUserFromRedis(authentication, swipedUserId);
     }
 
+    @Transactional
     public void likeUser(UUID likedUserId, Authentication authentication) {
         User user = userRepository.findById(getSubjectIdFromAuthentication(authentication))
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
@@ -278,29 +264,49 @@ public class UserService {
         }
     }
 
-    public Set<User> getRecommendedUsers(Authentication authentication) {
+    @Transactional
+    public Set<UserDto> getRecommendedUsers(Authentication authentication) {
         UUID userId = getSubjectIdFromAuthentication(authentication);
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
-        Set<User> recommendedUsers = user.getRecommended();
 
         // Check Redis for cached recommendations
         String recommendedUserIds = redisTemplate.opsForValue().get(String.valueOf(userId));
+        Set<User> recommendedUsers = new HashSet<>();
+
         if (recommendedUserIds != null && !recommendedUserIds.isEmpty()) {
             List<UUID> recommendedUserIdsList = Arrays.stream(recommendedUserIds.split(","))
                     .map(UUID::fromString)
                     .collect(Collectors.toList());
-            recommendedUsers = userRepository.findAllById(recommendedUserIdsList).stream()
-                    .filter(recommendedUser -> !user.getSwiped().contains(recommendedUser))
-                    .collect(Collectors.toSet());
-        } else if (recommendedUsers.isEmpty()) {
-            // If no cached recommendations, trigger recommendations and get from the database
+            for (UUID recommendedUserId : recommendedUserIdsList) {
+                User recommendedUser = userRepository.findById(recommendedUserId)
+                        .orElseThrow(() -> new RuntimeException("Recommended user not found"));
+                if (!user.getSwiped().contains(recommendedUser)) {
+                    recommendedUsers.add(recommendedUser);
+                }
+            }
+        }
+
+        if (recommendedUsers.isEmpty()) {
+            // Trigger recommendations and reload user to get updated recommendations
             recommendationService.triggerRecommendations(userId);
+            user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Authenticated user not found after triggering recommendations"));
             recommendedUsers = user.getRecommended();
         }
 
-        return recommendedUsers;
+        return recommendedUsers.stream().map(UserDto::new).collect(Collectors.toSet());
     }
+
+
+    public Set<User> getMatches(Authentication authentication) {
+        User user = userRepository.findById(getSubjectIdFromAuthentication(authentication))
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+        return user.getMatchedUsers();
+    }
+
+
+
 
     public void removeSwipedUserFromRedis(Authentication authentication, UUID swipedUserId) {
         UUID userId = getSubjectIdFromAuthentication(authentication);
@@ -317,6 +323,25 @@ public class UserService {
                 redisTemplate.opsForValue().set(userId.toString(), updatedSwipedUserIdsString);
             }
         }
+    }
+
+    public UUID getSubjectIdFromAuthentication(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof Jwt) {
+            Jwt jwt = (Jwt) principal;
+            String subject = jwt.getSubject(); // This is the 'sub' claim from the JWT token
+            return UUID.fromString(subject);
+        }
+        throw new IllegalStateException("Expected JWT authentication");
+    }
+
+    private UserRepresentation toUserRepresentation(RegisterUserRequest registerRequest) {
+        UserRepresentation userRepresentation = new UserRepresentation();
+        userRepresentation.setEmail(registerRequest.getEmail());
+        userRepresentation.setFirstName(registerRequest.getFirstName());
+        userRepresentation.setLastName(registerRequest.getLastName());
+        userRepresentation.setEnabled(true);
+        return userRepresentation;
     }
 
 
@@ -372,10 +397,4 @@ public class UserService {
         webSocketClientService.sendMessage(chatMessage2);
     }
 
-
-
-    public Set<User> getMatches(UUID userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found"));
-        return user.getMatchedUsers();
-    }
 }

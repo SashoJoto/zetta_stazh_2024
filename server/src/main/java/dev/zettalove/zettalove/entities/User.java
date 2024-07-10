@@ -6,6 +6,7 @@ import dev.zettalove.zettalove.enums.UserStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @Data
@@ -34,7 +35,7 @@ public class User {
     @Column(
             name = "date_of_birth"
     )
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     @Column(
             name = "description"

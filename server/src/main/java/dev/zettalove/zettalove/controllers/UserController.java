@@ -4,6 +4,7 @@ import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.requests.InitialInterestsRequest;
 import dev.zettalove.zettalove.requests.RegisterUserRequest;
 //import dev.zettalove.zettalove.services.RecommendationService;
+import dev.zettalove.zettalove.services.RecommendationService;
 import dev.zettalove.zettalove.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +21,6 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-//    private final RecommendationService recommendationService;
 
     @GetMapping
     public ResponseEntity<?> getAllUsers() {
@@ -59,6 +59,14 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    //TODO TEST IMAGES
+    //TODO ADD IMAGE METHODS
+
+    @GetMapping("/images")
+    public ResponseEntity<?> getUserImages(Authentication authentication) {
+        return ResponseEntity.ok(userService.getUserImages(authentication));
+    }
+
     @DeleteMapping("/images/{imageId}")
     public ResponseEntity<?> removeUserImage(
             @PathVariable Long imageId,
@@ -86,16 +94,15 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/recommendedUsers")
-    public Set<User> getRecommended(Authentication authentication) {
-        return userService.getRecommendedUsers(authentication);
+    @GetMapping("/recommended-users")
+    public ResponseEntity<?> getRecommended(Authentication authentication) {
+        return ResponseEntity.ok(userService.getRecommendedUsers(authentication));
     }
 
-
-
-    @GetMapping("/{userId}/matches")
-    public ResponseEntity<Set<User>> getMatches(@PathVariable UUID userId) {
-        Set<User> matches = userService.getMatches(userId);
+    @GetMapping("/matches")
+    public ResponseEntity<Set<User>> getMatches(Authentication authentication) {
+        Set<User> matches = userService.getMatches(authentication);
         return ResponseEntity.ok(matches);
     }
+
 }

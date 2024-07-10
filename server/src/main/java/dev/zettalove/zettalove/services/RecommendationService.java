@@ -6,6 +6,7 @@ import dev.zettalove.zettalove.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -18,10 +19,11 @@ public class RecommendationService {
     private final UserRepository userRepository;
     private final StringRedisTemplate redisTemplate;
 
+    @Transactional
     public void triggerRecommendations(UUID userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found"));
-        List<User> allUsers = userRepository.findAll(); // Consider pagination or batch processing for large datasets
-        Set<User> swipedUsers = user.getSwiped(); // Ensure this is fetched within the transaction
+        List<User> allUsers = userRepository.findAll();
+        Set<User> swipedUsers = user.getSwiped();
 
         Set<Interest> userPreferences = user.getInterests();
         LocalDate userMinDateOfBirth = calculateDateOfBirth(user.getDesiredMinAge());
@@ -34,9 +36,9 @@ public class RecommendationService {
                 .filter(other -> hasMatchingPreferences(userPreferences, other.getInterests()))
                 .collect(Collectors.toList());
 
+        user.getRecommended().clear();
         user.getRecommended().addAll(recommendedUsers);
 
-        // Write to Redis with userId as key and recommended user IDs as value (comma-separated string)
         String recommendedUserIds = recommendedUsers.stream()
                 .map(recommendedUser -> recommendedUser.getId().toString())
                 .collect(Collectors.joining(","));
@@ -44,20 +46,21 @@ public class RecommendationService {
         userRepository.save(user);
     }
 
-
     private boolean hasMatchingPreferences(Set<Interest> userPreferences, Set<Interest> otherPreferences) {
         Set<String> userPreferenceNames = userPreferences.stream().map(Interest::getName).collect(Collectors.toSet());
         Set<String> otherPreferenceNames = otherPreferences.stream().map(Interest::getName).collect(Collectors.toSet());
         return !Collections.disjoint(userPreferenceNames, otherPreferenceNames);
     }
 
-    private boolean isAgeCompatible(Date dateOfBirth, LocalDate minDateOfBirth, LocalDate maxDateOfBirth) {
-        LocalDate localDateOfBirth = dateOfBirth.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-        return (localDateOfBirth.isAfter(minDateOfBirth) || localDateOfBirth.isEqual(minDateOfBirth)) &&
-               (localDateOfBirth.isBefore(maxDateOfBirth) || localDateOfBirth.isEqual(maxDateOfBirth));
+    private boolean isAgeCompatible(LocalDate dateOfBirth, LocalDate minDateOfBirth, LocalDate maxDateOfBirth) {
+        int age = dateOfBirth.until(LocalDate.now(ZoneId.systemDefault())).getYears();
+        int minAge = minDateOfBirth.until(LocalDate.now(ZoneId.systemDefault())).getYears();
+        int maxAge = maxDateOfBirth.until(LocalDate.now(ZoneId.systemDefault())).getYears();
+        return age >= minAge && age <= maxAge;
     }
 
     private LocalDate calculateDateOfBirth(int age) {
         return LocalDate.now().minusYears(age);
     }
+
 }
