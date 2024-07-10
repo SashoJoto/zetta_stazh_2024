@@ -5,8 +5,8 @@ interface StepOneProps {
     nextStep: () => void;
     handleChange: (input: string) => (e: React.ChangeEvent<HTMLInputElement>) => void;
     values: {
-        firstName: string;
-        lastName: string;
+        first_name: string;
+        last_name: string;
         email: string;
         password: string;
     };
@@ -25,11 +25,11 @@ const StepOne: React.FC<StepOneProps> = ({ nextStep, handleChange, values }) => 
                     <h1>Register</h1>
                     <div className="input-group">
                         <label>First Name:</label>
-                        <input className="input-register" type="text" onChange={handleChange('firstName')} value={values.firstName} required />
+                        <input className="input-register" type="text" onChange={handleChange('first_name')} value={values.first_name} required />
                     </div>
                     <div className="input-group">
                         <label>Last Name:</label>
-                        <input className="input-register" type="text" onChange={handleChange('lastName')} value={values.lastName} required />
+                        <input className="input-register" type="text" onChange={handleChange('last_name')} value={values.last_name} required />
                     </div>
                     <div className="input-group">
                         <label>Email:</label>

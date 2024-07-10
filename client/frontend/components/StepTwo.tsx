@@ -36,6 +36,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
     const [availableInterests, setAvailableInterests] = useState<string[]>([]);
     const { token } = useAuth();
 
+
     useEffect(() => {
         const fetchInterests = async () => {
             if (!token) {
@@ -49,6 +50,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
                         Authorization: `Bearer ${token}`,
                     },
                 });
+                // Assuming the response.data is the JSON array provided
                 setAvailableInterests(response.data);
             } catch (error) {
                 console.error('Error fetching interests:', error);
@@ -57,6 +59,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
 
         fetchInterests();
     }, [token]);
+
 
     const continueToNext = (e: React.FormEvent) => {
         e.preventDefault();
@@ -141,8 +144,8 @@ const StepTwo: React.FC<StepTwoProps> = ({
                             required
                         >
                             <option value="">Select</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                            <option value="MALE">Male</option>
+                            <option value="FEMALE">Female</option>
                         </select>
                     </div>
                     <div className="input-group">
@@ -154,8 +157,9 @@ const StepTwo: React.FC<StepTwoProps> = ({
                             required
                         >
                             <option value="">Select</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
+                            <option value="MALE">Male</option>
+                            <option value="FEMALE">Female</option>
+                            <option value="BOTH">Both</option>
                         </select>
                     </div>
                     <div className="input-group">
@@ -167,13 +171,13 @@ const StepTwo: React.FC<StepTwoProps> = ({
                             value={values.interests}
                             required
                         >
-                            {availableInterests.map((interest, index) => (
-                                <option key={index} value={interest}>{interest}</option>
+                            {availableInterests.map((interest) => (
+                                <option key={interest.id} value={interest.name}>{interest.name}</option>
                             ))}
                         </select>
                     </div>
                     <button className="button-register" type="submit">Next</button>
-                    <p style={{ fontSize: '12px', marginTop: '10px', textAlign: 'left' }}>
+                    <p style={{fontSize: '12px', marginTop: '10px', textAlign: 'left'}}>
                         Already have an account? <Link to="/login" id="link-to-login">Login here</Link>
                     </p>
                 </form>

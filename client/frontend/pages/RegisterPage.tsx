@@ -89,10 +89,12 @@ const RegisterPage: React.FC = () => {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             });
-
-            if (response.data && response.data.token) {
-                localStorage.setItem('token', response.data.token);
-            }
+            // Extracting the access token from the response
+            const { access_token } = response.data;
+            console.log('Access token:', access_token);
+            // Saving the access token to local storage
+            localStorage.setItem('token', access_token);
+            console.log('Token saved to local storage:', localStorage.getItem('token'));
         } catch (error) {
             console.error('Error during first step registration:', error);
         }
@@ -100,6 +102,7 @@ const RegisterPage: React.FC = () => {
 
     const handleSecondStepSubmit = async () => {
         try {
+            const token = localStorage.getItem('token'); // Retrieve the token from local storage
             await axios.post(server_url + "/users/interests-setup", {
                 dateOfBirth: formData.dateOfBirth,
                 description: formData.description,
@@ -107,9 +110,13 @@ const RegisterPage: React.FC = () => {
                 phoneNumber: formData.phoneNumber,
                 desiredMinAge: formData.desiredMinAge,
                 desiredMaxAge: formData.desiredMaxAge,
-                gender: formData.gender,
-                desiredGender: formData.desiredGender,
+                gender: formData.gender.toUpperCase(),
+                desiredGender: formData.desiredGender.toUpperCase(),
                 interests: formData.interests,
+            }, {
+                headers: {
+                    Authorization: `Bearer ${token}` // Include the token in the Authorization header
+                }
             });
         } catch (error) {
             console.error('Error during second step registration:', error);
