@@ -4,6 +4,7 @@ import dev.zettalove.zettalove.entities.Interest;
 import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.enums.Gender;
 import dev.zettalove.zettalove.enums.GenderPreference;
+import dev.zettalove.zettalove.enums.UserStatus;
 import dev.zettalove.zettalove.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -34,6 +35,8 @@ public class RecommendationService {
 
         List<User> recommendedUsers = allUsers.stream()
                 .filter(other -> !user.equals(other))
+                .filter(other -> other.getDateOfBirth()!=null)
+                .filter(other -> other.getProfileStatus()== UserStatus.ACTIVE)
                 .filter(other -> !swipedUsers.contains(other))
                 .filter(other -> isAgeCompatible(other.getDateOfBirth(), userMinDateOfBirth, userMaxDateOfBirth))
                 .filter(other -> hasMatchingPreferences(userPreferences, other.getInterests()))

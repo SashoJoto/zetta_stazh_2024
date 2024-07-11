@@ -211,6 +211,11 @@ public class UserService {
         return user.getImages().stream().map(UserImageDto::new).collect(Collectors.toList());
     }
 
+    public List<UserImageDto> getUserImages(UUID userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        return user.getImages().stream().map(UserImageDto::new).collect(Collectors.toList());
+    }
+
     @Transactional
     public void removeUserImage(Long imageId, Authentication authentication) {
         UUID userId = getSubjectIdFromAuthentication(authentication);

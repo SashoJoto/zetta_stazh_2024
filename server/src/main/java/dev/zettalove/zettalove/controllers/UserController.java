@@ -1,6 +1,7 @@
 package dev.zettalove.zettalove.controllers;
 
 import dev.zettalove.zettalove.dto.UserDto;
+import dev.zettalove.zettalove.dto.UserImageDto;
 import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.requests.InitialInterestsRequest;
 import dev.zettalove.zettalove.requests.RegisterUserRequest;
@@ -106,6 +107,11 @@ public class UserController {
     @GetMapping("/self")
     public ResponseEntity<?> getSelf(Authentication authentication) {
         return ResponseEntity.ok(userService.getSelf(authentication));
+    }
+
+    @GetMapping("/{userId}/images")
+    public ResponseEntity<List<UserImageDto>> getUserImages(@PathVariable UUID userId) {
+        return ResponseEntity.ok(userService.getUserImages(userId));
     }
 
 }

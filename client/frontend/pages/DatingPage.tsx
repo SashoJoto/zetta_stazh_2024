@@ -7,12 +7,6 @@ import '../src/DatingPage.css';
 import { server_url } from "../constants/server_contants";
 import { userModel } from '../models/UserModel';
 
-// const cardsData = [
-//     { id: 1, image: datePic, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing', description: 'скъпа изглеждаш добре, ма не по+добре от хартията! за хартия бати лакомията. таа твойта бати мръсотията! ki + kilian по шията top тупалка, бати возията горчи, ама е бати вкусутията глей как блести, ебати газарията!' },
-//     { id: 2, image: datePic1, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing', description: 'Bio for Toni Kalashnika' },
-//     { id: 3, image: datePic2, name: 'Toni Kalashnika', age: 25, address: 'Filipovtsi', interests: 'reading, wanking, boxing', description: 'Bio for Toni Kalashnika' },
-// ];
-
 const DatingPage: React.FC = () => {
     const settings = {
         dots: true,
@@ -21,14 +15,15 @@ const DatingPage: React.FC = () => {
         slidesToShow: 1,
         slidesToScroll: 1,
         arrows: true,
-        autoplay: true, // Enables auto sliding
-        autoplaySpeed: 3000, // Auto slide every 2 seconds
-        pauseOnHover: true // Pause on hover
+        autoplay: true,
+        autoplaySpeed: 3000,
+        pauseOnHover: true
     };
 
     const [recommendedUsers, setRecommendedUsers] = useState<userModel[]>([]);
     const [currentUserIndex, setCurrentUserIndex] = useState(0);
     const [recommendedUser, setRecommendedUser] = useState<userModel | null>(null);
+    const [userImages, setUserImages] = useState<string[]>([]);
 
     useEffect(() => {
         const getRecommended = async () => {
@@ -49,16 +44,36 @@ const DatingPage: React.FC = () => {
         getRecommended();
     }, []);
 
-    const swipeUser = async () => {
+    useEffect(() => {
+        if (recommendedUser) {
+            fetchUserImages(recommendedUser.id);
+        }
+    }, [recommendedUser]);
+
+    const fetchUserImages = async (userId: string) => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.get(`${server_url}/users/self`, {
+            const response = await axios.get(`${server_url}/users/${userId}/images`, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
-            const { user_id } = response.data;
-            await axios.post(`${server_url}/users/${user_id}/swipe/${recommendedUser?.id}`, null, {
+            // Directly use the base64 strings as the source for <img> tags
+            // Assuming all images are JPEGs. Adjust the prefix if your images are in different formats.
+            const imagesWithPrefix = response.data.map((base64String: string) =>
+                `data:image/jpeg;base64,${base64String}`
+            );
+            setUserImages(imagesWithPrefix);
+        } catch (error) {
+            console.log("Error fetching user images:", error);
+        }
+    };
+
+
+    const swipeUser = async () => {
+        const token = localStorage.getItem('token');
+        try {
+            await axios.post(`${server_url}/users/swipe/${recommendedUser?.id}`, null, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -72,13 +87,7 @@ const DatingPage: React.FC = () => {
     const likeUser = async () => {
         const token = localStorage.getItem('token');
         try {
-            const response = await axios.get(`${server_url}/users/self`, {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            });
-            const { user_id } = response.data;
-            await axios.post(`${server_url}/users/${user_id}/like/${recommendedUser?.id}`, null, {
+            await axios.post(`${server_url}/users/like/${recommendedUser?.id}`, null, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
@@ -95,7 +104,7 @@ const DatingPage: React.FC = () => {
             setCurrentUserIndex(nextUserIndex);
             setRecommendedUser(recommendedUsers[nextUserIndex]);
         } else {
-            setRecommendedUser(null); // No more users to show
+            setRecommendedUser(null);
         }
     };
 
@@ -103,48 +112,52 @@ const DatingPage: React.FC = () => {
         <div className="dating-page">
             {recommendedUser ? (
                 <Slider {...settings}>
-                    <div className="date-pic-card" key={recommendedUser.id}>
-                        {/*<img src={card.image} alt={Card${card.id}}/>*/}
-                        <div className="date-pic-name">{recommendedUser.first_name}, {recommendedUser.age}</div>
-                        <div className="date-pic-bio">
-                            <div className="date-pic-icon" style={{ fontSize: '20px' }}>
-                                <div className="tashak">
-                                    <h2>Location</h2>
+                    {userImages.map((image, index) => (
+                        <div className="date-pic-card" key={index}>
+                            <img src={image} alt={`User ${recommendedUser?.firstName}`} className="user-image"/>
+                            <div className="date-pic-name">{recommendedUser.firstName}, {recommendedUser.age}</div>
+                            <div className="date-pic-bio">
+                                <div className="date-pic-icon" style={{fontSize: '20px'}}>
+                                    <div className="tashak">
+                                        <h2>Location</h2>
+                                    </div>
+                                    <div className="tashak-tekst">
+                                        {recommendedUser.address}
+                                    </div>
                                 </div>
-                                <div className="tashak-tekst">
-                                    {recommendedUser.address}
+                                <div className="date-pic-icon" style={{fontSize: '20px'}}>
+                                    <div className="tashak">
+                                        <h2>Interests</h2>
+                                    </div>
+                                    <div className="tashak-tekst">
+                                        {recommendedUser.interests.map(interest => interest.name).join(', ')}
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="date-pic-icon" style={{ fontSize: '20px' }}>
-                                <div className="tashak">
-                                    <h2>Interests</h2>
-                                </div>
-                                <div className="tashak-tekst">
-                                    {recommendedUser.interests}
-                                </div>
-                            </div>
-                            <div className="date-pic-icon" style={{ fontSize: '20px' }}>
-                                <div className="tashak">
-                                    <h2>Bio</h2>
-                                </div>
-                                <div className="tashak-tekst">
-                                    {recommendedUser.description}
+                                <div className="date-pic-icon" style={{fontSize: '20px'}}>
+                                    <div className="tashak">
+                                        <h2>Bio</h2>
+                                    </div>
+                                    <div className="tashak-tekst">
+                                        {recommendedUser.description}
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    ))}
                 </Slider>
             ) : (
                 <div>No more users to show</div>
             )}
-            <div style={{ display: 'flex', position: 'absolute', bottom: '1%', width: '400px', justifyContent: 'space-between' }}>
-                <button className="butoncheta btn mr-2" style={{ marginRight: '150px' }} onClick={swipeUser}>
-                    <img src="../src/assets/decline.png" alt="decline" style={{ width: '70px', height: '70px' }} />
-                </button>
-                <button className=" butoncheta btn" onClick={likeUser}>
-                    <img src="../src/assets/love.png" alt="love" style={{ width: '50px', height: '50px' }} />
-                </button>
-            </div>
+            {recommendedUser && (
+                <div style={{ display: 'flex', position: 'absolute', bottom: '1%', width: '400px', justifyContent: 'space-between' }}>
+                    <button className="butoncheta btn mr-2" style={{ marginRight: '150px' }} onClick={swipeUser}>
+                        <img src="../src/assets/decline.png" alt="decline" style={{ width: '70px', height: '70px' }} />
+                    </button>
+                    <button className=" butoncheta btn" onClick={likeUser}>
+                        <img src="../src/assets/love.png" alt="love" style={{ width: '50px', height: '50px' }} />
+                    </button>
+                </div>
+            )}
         </div>
     );
 };
