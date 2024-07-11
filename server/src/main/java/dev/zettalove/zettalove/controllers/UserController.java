@@ -1,5 +1,6 @@
 package dev.zettalove.zettalove.controllers;
 
+import dev.zettalove.zettalove.dto.UserDto;
 import dev.zettalove.zettalove.entities.User;
 import dev.zettalove.zettalove.requests.InitialInterestsRequest;
 import dev.zettalove.zettalove.requests.RegisterUserRequest;
@@ -23,7 +24,7 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<?> getAllUsers() {
+    public ResponseEntity<List<UserDto>> getAllUsers() {
         return ResponseEntity.ok(userService.getAllUsers());
     }
 
@@ -34,7 +35,7 @@ public class UserController {
 
 
     @PostMapping(path = "/register")
-    public ResponseEntity<?> registerUser(
+    public ResponseEntity<Void> registerUser(
             @RequestBody RegisterUserRequest registerRequest
     ) {
         userService.registerUser(registerRequest);
@@ -58,9 +59,6 @@ public class UserController {
         userService.initialImageSetup(images, authentication);
         return ResponseEntity.ok().build();
     }
-
-    //TODO TEST IMAGES
-    //TODO ADD IMAGE METHODS
 
     @GetMapping("/images")
     public ResponseEntity<?> getUserImages(Authentication authentication) {
@@ -103,6 +101,11 @@ public class UserController {
     public ResponseEntity<Set<User>> getMatches(Authentication authentication) {
         Set<User> matches = userService.getMatches(authentication);
         return ResponseEntity.ok(matches);
+    }
+
+    @GetMapping("/self")
+    public ResponseEntity<?> getSelf(Authentication authentication) {
+        return ResponseEntity.ok(userService.getSelf(authentication));
     }
 
 }

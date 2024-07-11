@@ -61,6 +61,11 @@ public class ProfileCompletionFilter extends OncePerRequestFilter {
 
                 String requestURI = request.getRequestURI();
 
+                if (requestURI.endsWith("/interests")) {
+                    filterChain.doFilter(request, response);
+                    return;
+                }
+
                 if (requestURI.endsWith("/users")) {
                     filterChain.doFilter(request, response);
                     return;

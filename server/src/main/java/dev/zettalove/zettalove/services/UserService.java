@@ -169,18 +169,19 @@ public class UserService {
             throw new ImagesSetupDoneException();
         }
 
-        List<UserImage> userImages = Arrays.stream(images)
-                .map(image -> UserImage.builder()
-                        .imageBase64(image.getBytes())
-                        .orderIndex(Arrays.asList(images).indexOf(image))
-                        .build())
-                .collect(Collectors.toList());
+        List<UserImage> userImages = new ArrayList<>();
+        for (int i = 0; i < images.length; i++) {
+            userImages.add(UserImage.builder()
+                    .imageBase64(images[i].getBytes())
+                    .orderIndex(i)
+                    .build());
+        }
 
         user.getImages().addAll(userImages);
 
         if (user.getProfileStatus() == UserStatus.IMAGES_MISSING) {
             user.setProfileStatus(UserStatus.ACTIVE);
-        }else if (user.getProfileStatus() == UserStatus.ACCOUNT_NOT_COMPLETE){
+        } else if (user.getProfileStatus() == UserStatus.ACCOUNT_NOT_COMPLETE){
             user.setProfileStatus(UserStatus.INTERESTS_MISSING);
         }
 
@@ -188,14 +189,20 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
+        Keycloak keycloak = keycloakProvider.getKeycloakInstance();
         return userRepository.findAll().stream()
-                .map(UserDto::new)
+                .map(user -> {
+                    UserRepresentation keycloakUser = keycloak.realm(realmName).users().get(user.getId().toString()).toRepresentation();
+                    return new UserDto(user, keycloakUser);
+                })
                 .collect(Collectors.toList());
     }
 
     public UserDto getUserById(UUID id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.map(UserDto::new).orElseThrow(() -> new UserNotFoundException(id));
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        Keycloak keycloak = keycloakProvider.getKeycloakInstance();
+        UserRepresentation keycloakUser = keycloak.realm(realmName).users().get(user.getId().toString()).toRepresentation();
+        return new UserDto(user, keycloakUser);
     }
 
     public List<UserImageDto> getUserImages(Authentication authentication) {
@@ -295,14 +302,28 @@ public class UserService {
             recommendedUsers = user.getRecommended();
         }
 
-        return recommendedUsers.stream().map(UserDto::new).collect(Collectors.toSet());
+        Keycloak keycloak = keycloakProvider.getKeycloakInstance();
+        return recommendedUsers.stream()
+                .map(recommendedUser -> {
+                    UserRepresentation keycloakUser = keycloak.realm(realmName).users().get(recommendedUser.getId().toString()).toRepresentation();
+                    return new UserDto(recommendedUser, keycloakUser);
+                })
+                .collect(Collectors.toSet());
     }
-
 
     public Set<User> getMatches(Authentication authentication) {
         User user = userRepository.findById(getSubjectIdFromAuthentication(authentication))
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
         return user.getMatchedUsers();
+    }
+
+    public UserDto getSelf(Authentication authentication) {
+        UUID userId = getSubjectIdFromAuthentication(authentication);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
+        Keycloak keycloak = keycloakProvider.getKeycloakInstance();
+        UserRepresentation keycloakUser = keycloak.realm(realmName).users().get(user.getId().toString()).toRepresentation();
+        return new UserDto(user, keycloakUser);
     }
 
 
@@ -396,5 +417,4 @@ public class UserService {
         webSocketClientService.sendMessage(chatMessage);
         webSocketClientService.sendMessage(chatMessage2);
     }
-
 }
