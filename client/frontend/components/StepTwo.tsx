@@ -4,7 +4,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import {server_url} from "../constants/server_contants.ts";
+import { server_url } from "../constants/server_contants.ts";
 
 interface StepTwoProps {
     nextStep: () => void;
@@ -36,7 +36,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
     const [availableInterests, setAvailableInterests] = useState<string[]>([]);
     const { token } = useAuth();
 
-
     useEffect(() => {
         const fetchInterests = async () => {
             if (!token) {
@@ -50,7 +49,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
                         Authorization: `Bearer ${token}`,
                     },
                 });
-                // Assuming the response.data is the JSON array provided
                 setAvailableInterests(response.data);
             } catch (error) {
                 console.error('Error fetching interests:', error);
@@ -59,7 +57,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
 
         fetchInterests();
     }, [token]);
-
 
     const continueToNext = (e: React.FormEvent) => {
         e.preventDefault();
@@ -83,6 +80,10 @@ const StepTwo: React.FC<StepTwoProps> = ({
                             selected={values.dateOfBirth}
                             onChange={handleDateChange}
                             dateFormat="yyyy/MM/dd"
+                            maxDate={new Date()}
+                            showYearDropdown
+                            scrollableYearDropdown
+                            yearDropdownItemNumber={100}
                             required
                         />
                     </div>
@@ -172,12 +173,12 @@ const StepTwo: React.FC<StepTwoProps> = ({
                             required
                         >
                             {availableInterests.map((interest) => (
-                                <option key={interest.id} value={interest.name}>{interest.name}</option>
+                                <option key={interest} value={interest}>{interest}</option>
                             ))}
                         </select>
                     </div>
                     <button className="button-register" type="submit">Next</button>
-                    <p style={{fontSize: '12px', marginTop: '10px', textAlign: 'left'}}>
+                    <p style={{ fontSize: '12px', marginTop: '10px', textAlign: 'left' }}>
                         Already have an account? <Link to="/login" id="link-to-login">Login here</Link>
                     </p>
                 </form>
