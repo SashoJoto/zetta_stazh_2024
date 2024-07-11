@@ -5,6 +5,7 @@ import StepThree from '../components/StepThree';
 import axios from 'axios';
 import '../src/RegisterPage.css';
 import { keycloak_url, server_url } from "../constants/server_contants.ts";
+import {useNavigate} from "react-router-dom";
 
 interface FormData {
     first_name: string;
@@ -41,6 +42,7 @@ const RegisterPage: React.FC = () => {
         interests: [],
         images: [],
     });
+    const navigate = useNavigate();
 
     const nextStep = async () => {
         if (step === 1) {
@@ -103,17 +105,23 @@ const RegisterPage: React.FC = () => {
     const handleSecondStepSubmit = async () => {
         try {
             const token = localStorage.getItem('token'); // Retrieve the token from local storage
-            await axios.post(server_url + "/users/interests-setup", {
-                dateOfBirth: formData.dateOfBirth,
+            // Format the date_of_birth to "YYYY-MM-DD"
+            const dateOfBirthString = formData.dateOfBirth ? formData.dateOfBirth.toISOString().split('T')[0] : '';
+            console.log('Date of birth:', dateOfBirthString);
+            // Prepare the request payload, ensuring keys match the desired structure
+            const payload = {
+                dateOfBirth: dateOfBirthString,
                 description: formData.description,
                 address: formData.address,
-                phoneNumber: formData.phoneNumber,
+                phoneNumber: formData.phoneNumber, // Convert phone_number to phoneNumber
                 desiredMinAge: formData.desiredMinAge,
                 desiredMaxAge: formData.desiredMaxAge,
-                gender: formData.gender.toUpperCase(),
-                desiredGender: formData.desiredGender.toUpperCase(),
+                gender: formData.gender.toUpperCase(), // Ensure gender is uppercase
+                desiredGender: formData.desiredGender.toUpperCase(), // Ensure desired_gender is uppercase
                 interests: formData.interests,
-            }, {
+            };
+
+            await axios.post(server_url + "/users/interests-setup", payload, {
                 headers: {
                     Authorization: `Bearer ${token}` // Include the token in the Authorization header
                 }
@@ -124,30 +132,39 @@ const RegisterPage: React.FC = () => {
     };
 
     const handleFinalSubmit = async () => {
-        const formDataToSend = new FormData();
-
-        const fileToBase64 = (file: File) => {
-            return new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result as string);
-                reader.onerror = (error) => reject(error);
-            });
-        };
-
         try {
+            // Function to convert a single file to base64
+            const fileToBase64 = (file: File): Promise<string> => {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => {
+                        const result = reader.result as string;
+                        const base64Data = result.split(',')[1]; // Split the result and take the part after the comma
+                        resolve(base64Data);
+                    };
+                    reader.onerror = error => reject(error);
+                    reader.readAsDataURL(file);
+                });
+            };
+
+            // Encode each image to base64 and store them in an array
             const base64Images = await Promise.all(formData.images.map(fileToBase64));
 
-            const token = localStorage.getItem('token'); // Retrieve the token from local storage
+            // Retrieve the token from local storage
+            const token = localStorage.getItem('token');
 
-            await axios.post(server_url + "/users/images-setup", {
-                images: base64Images
-            }, {
+            // Send just an array of the base64 encoded images
+            const response = await axios.post(server_url + "/users/images-setup", base64Images, {
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}` // Include the token in the Authorization header
+                    Authorization: `Bearer ${token}`
                 },
             });
+
+            if (response.status === 200) {
+                console.log('Successfully uploaded images');
+                navigate('/'); // Redirect to the main page after successful registration
+            }
         } catch (error) {
             console.error('Error during image upload:', error);
         }

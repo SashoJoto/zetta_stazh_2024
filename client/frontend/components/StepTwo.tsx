@@ -9,7 +9,7 @@ import { server_url } from "../constants/server_contants.ts";
 interface StepTwoProps {
     nextStep: () => void;
     prevStep: () => void;
-    handleDateChange: (date: Date) => void;
+    handleDateChange: (date: Date | null) => void;
     handleChange: (input: string) => (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => void;
     handleInterestsChange: (selectedInterests: string[]) => void;
     values: {
@@ -33,7 +33,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
                                              handleInterestsChange,
                                              values,
                                          }) => {
-    const [availableInterests, setAvailableInterests] = useState<string[]>([]);
+    const [availableInterests, setAvailableInterests] = useState<{ id: string; name: string }[]>([]);
     const { token } = useAuth();
 
     useEffect(() => {
@@ -78,7 +78,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
                         <DatePicker
                             className="input-register"
                             selected={values.dateOfBirth}
-                            onChange={handleDateChange}
+                            onChange={(date) => handleDateChange(date)}
                             dateFormat="yyyy/MM/dd"
                             maxDate={new Date()}
                             showYearDropdown
@@ -173,7 +173,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
                             required
                         >
                             {availableInterests.map((interest) => (
-                                <option key={interest} value={interest}>{interest}</option>
+                                <option key={interest.id} value={interest.name}>{interest.name}</option>
                             ))}
                         </select>
                     </div>

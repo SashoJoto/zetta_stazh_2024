@@ -20,18 +20,13 @@ import java.util.stream.Collectors;
 @Data
 public class UserDto {
     private UUID id;
-    @JsonProperty("first_name")
     private String firstName;
-    @JsonProperty("last_name")
     private String lastName;
     private String description;
     private String address;
-    @JsonProperty("phone_number")
     private String phoneNumber;
     private Gender gender;
-    @JsonProperty("desired_gender")
     private GenderPreference desiredGender;
-    @JsonProperty("date_of_birth")
     private LocalDate dateOfBirth;
     private Integer age;
     private Set<InterestDto> interests;
@@ -44,7 +39,11 @@ public class UserDto {
         this.gender = user.getGender();
         this.desiredGender = user.getDesiredGender();
         this.dateOfBirth = user.getDateOfBirth();
-        this.age = LocalDate.now().getYear() - user.getDateOfBirth().getYear();
+        if (user.getDateOfBirth() != null) {
+            this.age = LocalDate.now().getYear() - user.getDateOfBirth().getYear();
+        } else {
+            this.age = 0;
+        }
         this.interests = user.getInterests().stream().map(InterestDto::new).collect(Collectors.toSet());
 
         this.firstName = keycloakUser.getFirstName();
