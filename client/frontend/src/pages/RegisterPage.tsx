@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import StepOne from '../components/StepOne';
-import StepTwo from '../components/StepTwo';
-import StepThree from '../components/StepThree';
+import StepOne from '../components/StepOne.tsx';
+import StepTwo from '../components/StepTwo.tsx';
+import StepThree from '../components/StepThree.tsx';
 import axios from 'axios';
-import '../src/RegisterPage.css';
+import '../RegisterPage.css';
 import { keycloak_url, server_url } from "../constants/server_contants.ts";
 import {useNavigate} from "react-router-dom";
 

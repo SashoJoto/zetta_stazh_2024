@@ -1,12 +1,12 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import Header from '../components/Header';
-import DatingPage from '../pages/DatingPage';
-import MessagesPage from '../pages/MessagesPage';
-import ProfilePage from '../pages/ProfilePage';
-import LoginPage from '../pages/LoginPage';
-import RegisterPage from '../pages/RegisterPage';
-import PrivateRoute from '../components/PrivateRoute';
+import Header from './components/Header';
+import DatingPage from './pages/DatingPage';
+import MessagesPage from './pages/MessagesPage';
+import ProfilePage from './pages/ProfilePage';
+import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
+import PrivateRoute from './components/PrivateRoute';
 
 const App: React.FC = () => {
 

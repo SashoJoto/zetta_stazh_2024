@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import '../src/ProfilePage.css';
+import '../ProfilePage.css';
 import axios from 'axios';
-import { server_url } from "../constants/server_contants";
-import { UserModel } from "../models/UserModel";
+import { server_url } from "../constants/server_contants.ts";
+import { UserModel } from "../models/UserModel.ts";
 
 const fetchUserImage = async (userId: string): Promise<string | undefined> => {
     const token = localStorage.getItem('token');

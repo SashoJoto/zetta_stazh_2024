@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { useAuth } from '../contexts/AuthContext';
-import '../src/LoginPage.css';
+import { useAuth } from '../contexts/AuthContext.tsx';
+import '../LoginPage.css';
 import {keycloak_url} from "../constants/server_contants.ts";
 
 const LoginPage: React.FC = () => {

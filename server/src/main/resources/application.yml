@@ -11,9 +11,9 @@ server:
     context-path: /api/v${api.version}
 
 chat:
-  url: http://localhost:8082
-  users_url: http://localhost:8082/users
-  socket_url: ws://localhost:8082/ws
+  url: http://localhost:8083
+  users_url: http://localhost:8083/users
+  socket_url: ws://localhost:8083/ws
 
 spring:
   datasource:

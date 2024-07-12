@@ -3,9 +3,9 @@ import Slider from 'react-slick';
 import axios from 'axios';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import '../src/DatingPage.css';
-import { server_url } from "../constants/server_contants";
-import { UserModel } from '../models/UserModel';
+import '../DatingPage.css';
+import { server_url } from "../constants/server_contants.ts";
+import { UserModel } from '../models/UserModel.ts';
 
 const DatingPage: React.FC = () => {
     const settings = {
@@ -148,10 +148,10 @@ const DatingPage: React.FC = () => {
             {recommendedUser && (
                 <div style={{ display: 'flex', position: 'absolute', bottom: '1%', width: '400px', justifyContent: 'space-between' }}>
                     <button className="butoncheta btn mr-2" style={{ marginRight: '150px' }} onClick={swipeUser}>
-                        <img src="../src/assets/decline.png" alt="decline" style={{ width: '70px', height: '70px' }} />
+                        <img src="src/assets/decline.png" alt="decline" style={{ width: '70px', height: '70px' }} />
                     </button>
                     <button className="butoncheta btn" onClick={likeUser}>
-                        <img src="../src/assets/love.png" alt="love" style={{ width: '50px', height: '50px' }} />
+                        <img src="src/assets/love.png" alt="love" style={{ width: '50px', height: '50px' }} />
                     </button>
                 </div>
             )}

@@ -1,4 +1,4 @@
-import {InterestModel} from "./InterestModel";
+import {InterestModel} from "./InterestModel.ts";
 
 export type UserModel = {
     id : string,

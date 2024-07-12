@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logo from '../src/assets/zettalove_logo.png';
-import profilePic from '../src/assets/profile_pic_empty.png';
-import messageIcon from '../src/assets/chat.png';
+import logo from '../assets/zettalove_logo.png';
+import profilePic from '../assets/profile_pic_empty.png';
+import messageIcon from '../assets/chat.png';
 
 const Header: React.FC = () => {
     const tokenExists = localStorage.getItem('token');
