@@ -139,7 +139,7 @@ const RegisterPage: React.FC = () => {
                     const reader = new FileReader();
                     reader.onload = () => {
                         const result = reader.result as string;
-                        const base64Data = result; // Split the result and take the part after the comma
+                        const base64Data = result;
                         resolve(base64Data);
                     };
                     reader.onerror = error => reject(error);
@@ -147,13 +147,10 @@ const RegisterPage: React.FC = () => {
                 });
             };
 
-            // Encode each image to base64 and store them in an array
             const base64Images = await Promise.all(formData.images.map(fileToBase64));
 
-            // Retrieve the token from local storage
             const token = localStorage.getItem('token');
 
-            // Send just an array of the base64 encoded images
             const response = await axios.post(server_url + "/users/images-setup", base64Images, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -163,7 +160,7 @@ const RegisterPage: React.FC = () => {
 
             if (response.status === 200) {
                 console.log('Successfully uploaded images');
-                navigate('/'); // Redirect to the main page after successful registration
+                navigate('/');
             }
         } catch (error) {
             console.error('Error during image upload:', error);

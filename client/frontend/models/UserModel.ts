@@ -1,6 +1,6 @@
-import {interestModel} from "./InterestModel";
+import {InterestModel} from "./InterestModel";
 
-export type userModel = {
+export type UserModel = {
     id : string,
     firstName: string,
     lastName: string,
@@ -11,5 +11,5 @@ export type userModel = {
     desiredGender: string,
     dateOfBirth: string,
     age: string,
-    interests: interestModel[]
+    interests: InterestModel[]
 }

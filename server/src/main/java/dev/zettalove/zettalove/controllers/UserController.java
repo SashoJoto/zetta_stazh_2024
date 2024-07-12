@@ -82,12 +82,11 @@ public class UserController {
     }
 
     @PostMapping("/like/{likedUserId}")
-    public ResponseEntity<Void> likeUser(
+    public ResponseEntity<String> likeUser(
             @PathVariable UUID likedUserId,
             Authentication authentication
     ) {
-        userService.likeUser(likedUserId, authentication);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.likeUser(likedUserId, authentication));
     }
 
     @GetMapping("/recommended-users")

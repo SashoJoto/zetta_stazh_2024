@@ -1,4 +1,4 @@
-export type interestModel = {
+export type InterestModel = {
     id: string,
     name: string
 }

@@ -5,7 +5,7 @@ import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import '../src/DatingPage.css';
 import { server_url } from "../constants/server_contants";
-import { userModel } from '../models/UserModel';
+import { UserModel } from '../models/UserModel';
 
 const DatingPage: React.FC = () => {
     const settings = {
@@ -20,9 +20,9 @@ const DatingPage: React.FC = () => {
         pauseOnHover: true
     };
 
-    const [recommendedUsers, setRecommendedUsers] = useState<userModel[]>([]);
+    const [recommendedUsers, setRecommendedUsers] = useState<UserModel[]>([]);
     const [currentUserIndex, setCurrentUserIndex] = useState(0);
-    const [recommendedUser, setRecommendedUser] = useState<userModel | null>(null);
+    const [recommendedUser, setRecommendedUser] = useState<UserModel | null>(null);
     const [userImages, setUserImages] = useState<string[]>([]);
 
     useEffect(() => {
@@ -59,7 +59,6 @@ const DatingPage: React.FC = () => {
                 }
             });
             // Directly use the response data assuming it's an array of base64 encoded images
-            console.log(response.data);
             setUserImages(response.data);
         } catch (error) {
             console.log("Error fetching user images:", error);
@@ -83,11 +82,13 @@ const DatingPage: React.FC = () => {
     const likeUser = async () => {
         const token = localStorage.getItem('token');
         try {
-            await axios.post(`${server_url}/users/like/${recommendedUser?.id}`, null, {
+            const response = await axios.post(`${server_url}/users/like/${recommendedUser?.id}`, null, {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }
             });
+            if (response.data === "matched")
+                alert("You have a match!");
             updateCurrentUser();
         } catch (error) {
             console.log("Couldn't like user", error);
@@ -109,7 +110,6 @@ const DatingPage: React.FC = () => {
             {recommendedUser ? (
                 <Slider {...settings}>
                     {userImages.map((image, index) => (
-                        console.log(image),
                             <div className="date-pic-card" key={index}>
                                 <img src={image.image_base64} alt={`User ${recommendedUser?.firstName}`} className="user-image"/>
                                 <div className="date-pic-name">{recommendedUser.firstName}, {recommendedUser.age}</div>

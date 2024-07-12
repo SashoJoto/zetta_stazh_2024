@@ -31,13 +31,11 @@ const LoginPage: React.FC = () => {
 
             const { access_token } = response.data;
 
-            // Save the token and user information
             login({ email }, access_token);
 
-            // Navigate to the main page after successful login
             navigate('/');
+            window.location.reload();
         } catch (err) {
-            // Handle error
             setError('Login failed. Please check your credentials and try again.');
         }
     };

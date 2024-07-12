@@ -248,7 +248,7 @@ public class UserService {
     }
 
     @Transactional
-    public void likeUser(UUID likedUserId, Authentication authentication) {
+    public String likeUser(UUID likedUserId, Authentication authentication) {
         User user = userRepository.findById(getSubjectIdFromAuthentication(authentication))
                 .orElseThrow(() -> new RuntimeException("Authenticated user not found"));
 
@@ -273,7 +273,9 @@ public class UserService {
             removeSwipedUserFromRedis(authentication, likedUserId);
 
             notifyUsersForMatch(user, likedUser);
+            return "matched";
         }
+        return "";
     }
 
     @Transactional
@@ -373,7 +375,7 @@ public class UserService {
 
     private void addUserToChatSystem(User user) {
         UserRepresentation userRepresentation = keycloakProvider.getKeycloakInstance().realm(realmName).users().get(user.getId().toString()).toRepresentation();
-        String nickname = userRepresentation.getEmail();
+        String nickname = userRepresentation.getId();
         String fullName = userRepresentation.getFirstName() + " " + userRepresentation.getLastName();
         ChatUser chatUser = new ChatUser(nickname, fullName);
         webSocketClientService.addUserToChatSystem(chatUser);
