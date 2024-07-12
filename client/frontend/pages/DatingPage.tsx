@@ -58,17 +58,13 @@ const DatingPage: React.FC = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            // Directly use the base64 strings as the source for <img> tags
-            // Assuming all images are JPEGs. Adjust the prefix if your images are in different formats.
-            const imagesWithPrefix = response.data.map((base64String: string) =>
-                `data:image/jpeg;base64,${base64String}`
-            );
-            setUserImages(imagesWithPrefix);
+            // Assuming the base64 strings already include the necessary prefix
+            setUserImages(response.data);
+            console.log("User images:", response.data)
         } catch (error) {
             console.log("Error fetching user images:", error);
         }
     };
-
 
     const swipeUser = async () => {
         const token = localStorage.getItem('token');

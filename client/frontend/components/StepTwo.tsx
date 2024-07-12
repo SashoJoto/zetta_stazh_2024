@@ -38,17 +38,8 @@ const StepTwo: React.FC<StepTwoProps> = ({
 
     useEffect(() => {
         const fetchInterests = async () => {
-            if (!token) {
-                console.error('No auth token found');
-                return;
-            }
-
             try {
-                const response = await axios.get(server_url + "/interests", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                });
+                const response = await axios.get(server_url + "/interests");
                 setAvailableInterests(response.data);
             } catch (error) {
                 console.error('Error fetching interests:', error);
@@ -56,7 +47,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
         };
 
         fetchInterests();
-    }, [token]);
+    }, []); // Ensure token is in the dependency array
 
     const continueToNext = (e: React.FormEvent) => {
         e.preventDefault();

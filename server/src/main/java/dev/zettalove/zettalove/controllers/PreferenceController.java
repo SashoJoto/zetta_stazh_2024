@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 @RestController
-@RequestMapping("/server/preferences")
+@RequestMapping("/preferences")
 @RequiredArgsConstructor
 public class PreferenceController {
     private final PreferenceService preferenceService;

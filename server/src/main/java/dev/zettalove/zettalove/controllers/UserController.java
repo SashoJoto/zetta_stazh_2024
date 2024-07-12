@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("/users")
@@ -30,7 +27,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<UserDto> getUserById(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
@@ -44,7 +41,7 @@ public class UserController {
     }
 
     @PostMapping("/interests-setup")
-    public ResponseEntity<?> initialInterestsSetup(
+    public ResponseEntity<Void> initialInterestsSetup(
             @RequestBody InitialInterestsRequest request,
             Authentication authentication
     ) {
@@ -53,7 +50,7 @@ public class UserController {
     }
 
     @PostMapping("/images-setup")
-    public ResponseEntity<?> initialImageSetup(
+    public ResponseEntity<Void> initialImageSetup(
             @RequestBody String[] images,
             Authentication authentication
     ) {
@@ -62,12 +59,12 @@ public class UserController {
     }
 
     @GetMapping("/images")
-    public ResponseEntity<?> getUserImages(Authentication authentication) {
+    public ResponseEntity<List<UserImageDto>> getUserImages(Authentication authentication) {
         return ResponseEntity.ok(userService.getUserImages(authentication));
     }
 
     @DeleteMapping("/images/{imageId}")
-    public ResponseEntity<?> removeUserImage(
+    public ResponseEntity<Void> removeUserImage(
             @PathVariable Long imageId,
             Authentication authentication
     ) {
@@ -76,7 +73,7 @@ public class UserController {
     }
 
     @PostMapping("/swipe/{swipedUserId}")
-    public ResponseEntity<?> swipeUser(
+    public ResponseEntity<Void> swipeUser(
             @PathVariable UUID swipedUserId,
             Authentication authentication
     ) {
@@ -85,7 +82,7 @@ public class UserController {
     }
 
     @PostMapping("/like/{likedUserId}")
-    public ResponseEntity<?> likeUser(
+    public ResponseEntity<Void> likeUser(
             @PathVariable UUID likedUserId,
             Authentication authentication
     ) {
@@ -94,7 +91,7 @@ public class UserController {
     }
 
     @GetMapping("/recommended-users")
-    public ResponseEntity<?> getRecommended(Authentication authentication) {
+    public ResponseEntity<Set<UserDto>> getRecommended(Authentication authentication) {
         return ResponseEntity.ok(userService.getRecommendedUsers(authentication));
     }
 
@@ -105,7 +102,7 @@ public class UserController {
     }
 
     @GetMapping("/self")
-    public ResponseEntity<?> getSelf(Authentication authentication) {
+    public ResponseEntity<UserDto> getSelf(Authentication authentication) {
         return ResponseEntity.ok(userService.getSelf(authentication));
     }
 

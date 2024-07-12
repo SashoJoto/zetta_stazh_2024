@@ -333,7 +333,6 @@ public class UserService {
 
 
 
-
     public void removeSwipedUserFromRedis(Authentication authentication, UUID swipedUserId) {
         UUID userId = getSubjectIdFromAuthentication(authentication);
 
@@ -372,21 +371,13 @@ public class UserService {
 
 
 
-
-
-
-
-
-
     private void addUserToChatSystem(User user) {
-        String nickname = user.getId().toString();
-        String fullName = user.getId().toString();//user.getFirstName() + " " + user.getLastName();
+        UserRepresentation userRepresentation = keycloakProvider.getKeycloakInstance().realm(realmName).users().get(user.getId().toString()).toRepresentation();
+        String nickname = userRepresentation.getEmail();
+        String fullName = userRepresentation.getFirstName() + " " + userRepresentation.getLastName();
         ChatUser chatUser = new ChatUser(nickname, fullName);
         webSocketClientService.addUserToChatSystem(chatUser);
     }
-
-    //TODO DELETE USER
-
 
      public void notifyUsersForMatch(User user, User likedUser) {
         // Fetch user ids from chat service
@@ -418,7 +409,6 @@ public class UserService {
                 .timestamp(new Date())
                 .build();
 
-        // Post the chat message to the chat service to process and notify users
         webSocketClientService.sendMessage(chatMessage);
         webSocketClientService.sendMessage(chatMessage2);
     }

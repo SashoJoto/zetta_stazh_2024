@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+@Deprecated
 @Service
 @RequiredArgsConstructor
 public class PreferenceService {

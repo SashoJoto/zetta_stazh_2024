@@ -139,7 +139,7 @@ const RegisterPage: React.FC = () => {
                     const reader = new FileReader();
                     reader.onload = () => {
                         const result = reader.result as string;
-                        const base64Data = result.split(',')[1]; // Split the result and take the part after the comma
+                        const base64Data = result; // Split the result and take the part after the comma
                         resolve(base64Data);
                     };
                     reader.onerror = error => reject(error);

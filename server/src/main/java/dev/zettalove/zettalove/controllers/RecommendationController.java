@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/server/recommendations")
+@RequestMapping("/recommendations")
 public class RecommendationController {
     private final UserService userService;
     private final RecommendationService recommendationService;
