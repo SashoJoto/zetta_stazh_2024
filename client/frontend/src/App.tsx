@@ -7,18 +7,16 @@ import ProfilePage from '../pages/ProfilePage';
 import LoginPage from '../pages/LoginPage';
 import RegisterPage from '../pages/RegisterPage';
 import PrivateRoute from '../components/PrivateRoute';
-import { useAuth } from '../contexts/AuthContext';
 
 const App: React.FC = () => {
-    const { user } = useAuth();
 
     return (
         <div style={{ minHeight: '100vh' }}>
             <Header />
             <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage />} />
-                <Route path="/" element={user ? <DatingPage /> : <Navigate to="/login" />} />
+                <Route path="/login" element={!localStorage.getItem("token") ? <LoginPage /> : <DatingPage />} />
+                <Route path="/register" element={!localStorage.getItem("token") ? <RegisterPage /> : <DatingPage />} />
+                <Route path="/" element={localStorage.getItem("token") ? <DatingPage /> : <Navigate to="/login" />} />
                 <Route path="/" element={<PrivateRoute />}>
                     <Route path="messages" element={<MessagesPage />} />
                     <Route path="profile" element={<ProfilePage />} />

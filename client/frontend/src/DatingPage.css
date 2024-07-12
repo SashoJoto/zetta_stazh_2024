@@ -98,3 +98,9 @@
     border-bottom: 3px solid white;
 
 }
+
+.user-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Cover the container without stretching. */
+}

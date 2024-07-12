@@ -58,9 +58,9 @@ const DatingPage: React.FC = () => {
                     Authorization: `Bearer ${token}`
                 }
             });
-            // Assuming the base64 strings already include the necessary prefix
+            // Directly use the response data assuming it's an array of base64 encoded images
+            console.log(response.data);
             setUserImages(response.data);
-            console.log("User images:", response.data)
         } catch (error) {
             console.log("Error fetching user images:", error);
         }
@@ -109,36 +109,37 @@ const DatingPage: React.FC = () => {
             {recommendedUser ? (
                 <Slider {...settings}>
                     {userImages.map((image, index) => (
-                        <div className="date-pic-card" key={index}>
-                            <img src={image} alt={`User ${recommendedUser?.firstName}`} className="user-image"/>
-                            <div className="date-pic-name">{recommendedUser.firstName}, {recommendedUser.age}</div>
-                            <div className="date-pic-bio">
-                                <div className="date-pic-icon" style={{fontSize: '20px'}}>
-                                    <div className="tashak">
-                                        <h2>Location</h2>
+                        console.log(image),
+                            <div className="date-pic-card" key={index}>
+                                <img src={image.image_base64} alt={`User ${recommendedUser?.firstName}`} className="user-image"/>
+                                <div className="date-pic-name">{recommendedUser.firstName}, {recommendedUser.age}</div>
+                                <div className="date-pic-bio">
+                                    <div className="date-pic-icon" style={{fontSize: '20px'}}>
+                                        <div className="tashak">
+                                            <h2>Location</h2>
+                                        </div>
+                                        <div className="tashak-tekst">
+                                            {recommendedUser.address}
+                                        </div>
                                     </div>
-                                    <div className="tashak-tekst">
-                                        {recommendedUser.address}
+                                    <div className="date-pic-icon" style={{fontSize: '20px'}}>
+                                        <div className="tashak">
+                                            <h2>Interests</h2>
+                                        </div>
+                                        <div className="tashak-tekst">
+                                            {recommendedUser.interests.map(interest => interest.name).join(', ')}
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="date-pic-icon" style={{fontSize: '20px'}}>
-                                    <div className="tashak">
-                                        <h2>Interests</h2>
-                                    </div>
-                                    <div className="tashak-tekst">
-                                        {recommendedUser.interests.map(interest => interest.name).join(', ')}
-                                    </div>
-                                </div>
-                                <div className="date-pic-icon" style={{fontSize: '20px'}}>
-                                    <div className="tashak">
-                                        <h2>Bio</h2>
-                                    </div>
-                                    <div className="tashak-tekst">
-                                        {recommendedUser.description}
+                                    <div className="date-pic-icon" style={{fontSize: '20px'}}>
+                                        <div className="tashak">
+                                            <h2>Bio</h2>
+                                        </div>
+                                        <div className="tashak-tekst">
+                                            {recommendedUser.description}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
                     ))}
                 </Slider>
             ) : (
@@ -149,7 +150,7 @@ const DatingPage: React.FC = () => {
                     <button className="butoncheta btn mr-2" style={{ marginRight: '150px' }} onClick={swipeUser}>
                         <img src="../src/assets/decline.png" alt="decline" style={{ width: '70px', height: '70px' }} />
                     </button>
-                    <button className=" butoncheta btn" onClick={likeUser}>
+                    <button className="butoncheta btn" onClick={likeUser}>
                         <img src="../src/assets/love.png" alt="love" style={{ width: '50px', height: '50px' }} />
                     </button>
                 </div>
